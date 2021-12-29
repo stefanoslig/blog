@@ -12,17 +12,17 @@ function HomePage() {
       <Container>
         <div className="space-y-6">
           <h1 className="text-2xl font-bold">
-            Hey
+            Hey! This is my persolnal blog!
           </h1>
           <p>This blog is built with Next.js.</p>
         </div>
       </Container>
 
-      <div className="container max-w-4xl m-auto px-4 mt-20">
+      <div className="container">
         <Image
-          src="/desk.jpg"
-          alt="my desk"
-          width={1920 / 2}
+          src="/assets/under-construction.png"
+          alt="under construction"
+          width={1280 / 2}
           height={1280 / 2}
         />
       </div>
