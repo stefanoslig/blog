@@ -12,7 +12,7 @@ function HomePage() {
         <div className="container max-w-4xl m-auto px-4 mt-20">
           <Image
             src="/assets/my-photo.jpeg"
-            alt="my desk"
+            alt="my photo"
             className="rounded-full"
             width={250}
             height={250}
