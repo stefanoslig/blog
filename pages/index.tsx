@@ -17,12 +17,16 @@ function HomePage() {
             width={250}
             height={250}
           />
-
-
         </div>
       </Container>
-
-      <div>long</div>story<div>short</div>
+      <div className="links">
+        <a href="http://twitter.com/stefanos_lig">twitter</a>
+        <a href="http://github.com/stefanoslig">github</a>
+        <a href="https://www.linkedin.com/in/stefanoslignos/">linkedin</a>
+      </div>
+      <div className="about">long story short</div>
+      <div>long story</div>
+      <div>short story</div>
     </>
   );
 }

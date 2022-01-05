@@ -5,11 +5,6 @@ import underConstruction from "../public//assets/under-construction.png";
 function Maintenance() {
   return (
     <>
-      <Head>
-        <title>stefanos.dev 🚀</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="container">
         <Image
           src={underConstruction}
