@@ -5,11 +5,15 @@ function HomePage() {
   return (
     <>
       <Container>
-        <div className="space-y-6">
-          <h1 className="text-2xl font-bold">Stefanos Lignos</h1>
-          <h2 className="text-2xl font-bold">Software Engineer in Amsterdam</h2>
-        </div>
-        <div className="container max-w-4xl m-auto px-4 mt-20">
+        <div className="flex justify-center pt-4">
+          <div className="pr-10">
+            <h1 className="text-2xl text-gray-800 font-bold">
+              Stefanos Lignos
+            </h1>
+            <h2 className="text-xl text-neutral-500	">
+              Software Engineer in Amsterdam
+            </h2>
+          </div>
           <Image
             src="/assets/my-photo.jpeg"
             alt="my photo"
@@ -18,15 +22,33 @@ function HomePage() {
             height={250}
           />
         </div>
+
+        <div className="flex justify-center pt-12">
+          <a
+            className="underline text-orange-500 text-lg	 rounded-lg p-2 m-3"
+            href="http://twitter.com/stefanos_lig"
+          >
+            twitter
+          </a>
+          <a
+            className="underline text-emerald-500	text-lg rounded-lg p-2 m-3"
+            href="http://github.com/stefanoslig"
+          >
+            github
+          </a>
+          <a
+            className="underline text-sky-500	text-lg rounded-lg p-2 m-3"
+            href="https://www.linkedin.com/in/stefanoslignos/"
+          >
+            linkedin
+          </a>
+        </div>
+        <div className="flex justify-center pt-6">
+          <div className="about">long story short</div>
+          <div>long story</div>
+          <div>short story</div>
+        </div>
       </Container>
-      <div className="links">
-        <a href="http://twitter.com/stefanos_lig">twitter</a>
-        <a href="http://github.com/stefanoslig">github</a>
-        <a href="https://www.linkedin.com/in/stefanoslignos/">linkedin</a>
-      </div>
-      <div className="about">long story short</div>
-      <div>long story</div>
-      <div>short story</div>
     </>
   );
 }

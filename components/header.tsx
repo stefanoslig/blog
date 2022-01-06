@@ -4,9 +4,9 @@ import Container from "./container";
 
 const Header: FunctionComponent = () => {
   return (
-    <header className="py-6">
+    <header className="py-10">
       <Container>
-        <nav className="flex space-x-4">
+        <nav className="flex space-x-6 pl-8">
           <Link href="/">
             <a>About</a>
           </Link>
