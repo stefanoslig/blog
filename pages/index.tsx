@@ -43,9 +43,15 @@ function HomePage() {
             >
               linkedin
             </a>
+            <a
+              className="underline text-red-500	text-lg  mr-10"
+              href="https://medium.com/@stefanoslignos"
+            >
+              medium
+            </a>
           </div>
-          
-          <LongStoryShort mode="short" />
+
+          <LongStoryShort />
         </div>
       </Container>
     </>
