@@ -6,7 +6,7 @@ function HomePage() {
   return (
     <>
       <Container>
-        <div className="flex flex-col mx-auto" style={{width: "650px"}}>
+        <div className="flex flex-col mx-auto max-w-md">
           <div className="flex pt-4 items-center">
             <div className="pr-10">
               <h1 className="text-2xl text-slate-700 font-bold">

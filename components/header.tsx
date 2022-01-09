@@ -10,7 +10,7 @@ const Header: FunctionComponent = () => {
   return (
     <header className="py-10">
       <Container>
-        <nav className="flex pl-8 justify-between">
+        <nav className="flex md:pl-8 sm:pl-2 justify-between">
           <div className="space-x-6 ">
             <Link href="/">
               <a
@@ -31,8 +31,9 @@ const Header: FunctionComponent = () => {
               </a>
             </Link>
           </div>
-          <div className="">
-            <AiOutlineMail  className="inline-block"/> <span className="ml-1">stefanoslignos@gmail.com</span>
+
+          <div className="ml-6 flex align-middle">
+            <AiOutlineMail className="inline-block mt-1"/> <span className="ml-1 inline-block">stefanoslignos@gmail.com</span>
           </div>
         </nav>
       </Container>
