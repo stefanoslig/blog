@@ -5,7 +5,7 @@ function Posts() {
     <>
       <Container>
         <h4>
-          I&apos;m currently implementing my blog. It will be released on the 24th of
+          I&apos;m currently implementing my blog. It will be released on the 28th of
           January 2022.
         </h4>
         <h4>
