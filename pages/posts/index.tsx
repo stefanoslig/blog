@@ -1,6 +1,6 @@
-import Container from "../components/container";
+import Container from "../../components/container";
 
-function Posts() {
+function Index() {
   return (
     <>
       <Container>
@@ -23,4 +23,4 @@ function Posts() {
   );
 }
 
-export default Posts;
+export default Index;
