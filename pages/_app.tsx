@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>stefanos.dev 🚀</title>
+        <title>Stefanos Lignos 🚀</title>
       </Head>
 
       <Header />

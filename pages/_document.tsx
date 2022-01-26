@@ -9,7 +9,7 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap"
             rel="stylesheet"
           />
-          <meta property="og:title" content="stefanos.dev 🚀" />
+          <meta property="og:title" content="Stefanos Lignos 🚀" />
           <link rel="icon" href="/favicon.ico" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="description" content="My blog! Stefanos Lignos" />
