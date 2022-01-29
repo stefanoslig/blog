@@ -1,26 +1,49 @@
 import Container from "../../components/container";
+import MainPost from "../../components/main-post";
+import MoreStories from "../../components/more-stories";
+import { getAllPosts } from "../../lib/api";
+import Post from "../../types/post";
 
-function Index() {
+type Props = {
+  allPosts: Post[]
+}
+
+function Index({ allPosts }: Props) {
+  const mainPost = allPosts[0]
+  const morePosts = allPosts.slice(1)
+
   return (
     <>
       <Container>
-        <h4>
-          I&apos;m currently implementing my blog. It will be available soon.
-        </h4>
-        <h4>
-          Until then have a look at my account on
-          <a
-            className="underline text-sky-500	text-lg rounded-lg"
-            href="https://medium.com/@stefanoslignos"
-          >
-            {" "}
-            Medium
-          </a>
-          .
-        </h4>
+        {mainPost && (
+          <MainPost
+            title={mainPost.title}
+            coverImage={mainPost.coverImage}
+            date={mainPost.date}
+            author={mainPost.author}
+            slug={mainPost.slug}
+            excerpt={mainPost.excerpt}
+          />
+        )}
+        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
       </Container>
     </>
   );
 }
 
 export default Index;
+
+export const getStaticProps = async () => {
+  const allPosts = getAllPosts([
+    'title',
+    'date',
+    'slug',
+    'author',
+    'coverImage',
+    'excerpt',
+  ])
+
+  return {
+    props: { allPosts },
+  }
+}
