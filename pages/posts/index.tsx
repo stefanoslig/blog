@@ -1,31 +1,40 @@
+import Link from "next/link";
 import Container from "../../components/container";
-import MainPost from "../../components/main-post";
-import MoreStories from "../../components/more-stories";
+import DateFormatter from "../../components/date-formatter";
 import { getAllPosts } from "../../lib/api";
 import Post from "../../types/post";
 
 type Props = {
-  allPosts: Post[]
-}
+  allPosts: Post[];
+};
 
 function Index({ allPosts }: Props) {
-  const mainPost = allPosts[0]
-  const morePosts = allPosts.slice(1)
+  const mainPost = allPosts[0];
+  const morePosts = allPosts.slice(1);
 
   return (
     <>
       <Container>
-        {mainPost && (
-          <MainPost
-            title={mainPost.title}
-            coverImage={mainPost.coverImage}
-            date={mainPost.date}
-            author={mainPost.author}
-            slug={mainPost.slug}
-            excerpt={mainPost.excerpt}
-          />
-        )}
-        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+        <div className="flex justify-center">
+          {allPosts.length ? (
+            allPosts.map((post) => (
+              <article key={post.slug} className="xs:11/12 sm:9/12 lg:w-6/12">
+                <Link as={`/posts/${post.slug}`} href="/posts/[slug]">
+                  <a className="text-xl leading-6 font-bold text-orange-500">{post.title}</a>
+                </Link>
+                <p className="text-lg">{post.excerpt}</p>
+                <div className="text-gray-400 flex justify-between text-lg">
+                  <DateFormatter dateString={post.date} />
+                  <Link as={`/posts/${post.slug}`} href="/posts/[slug]">
+                    <a className="text-orange-500">read more...</a>
+                  </Link>
+                </div>
+              </article>
+            ))
+          ) : (
+            <p>No blog posted yet :/</p>
+          )}
+        </div>
       </Container>
     </>
   );
@@ -35,15 +44,15 @@ export default Index;
 
 export const getStaticProps = async () => {
   const allPosts = getAllPosts([
-    'title',
-    'date',
-    'slug',
-    'author',
-    'coverImage',
-    'excerpt',
-  ])
+    "title",
+    "date",
+    "slug",
+    "author",
+    "coverImage",
+    "excerpt",
+  ]);
 
   return {
     props: { allPosts },
-  }
-}
+  };
+};
