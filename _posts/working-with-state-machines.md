@@ -48,7 +48,7 @@ So, do we have a way to keep track of and visualise all these different states t
 How State Machines help us reduce complexity
 ============================================
 
-![](https://miro.medium.com/max/1020/1*Vna6WNUtqeV3w2lAp8NPpw.png)States and State transitions using a state diagram
+![](/assets/blog/working-with-state-machines/state-transitions.png)States and State transitions using a state diagram
 
 First things first, what is a State Machine? A [finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine) (FSM) is a mathematical concept which was introduced in the early ’40s. It is an abstract way of thinking about how computers and computations work and they are especially useful for describing reactive systems such as user interfaces that need to respond to events from the outside³. The FSM can have different states, but at a given time fulfils only one of them. The FSM can change from one state to another in response to some external inputs; the change from one state to another is called _transition_. There are different types of FSMs. The one that is more suitable in the UI development is the [Mealy machine](https://en.wikipedia.org/wiki/Mealy_machine) where each transition to a new state depends on the current state and the current inputs (events, actions). Does this remind you of anything? A reducer for example?
 
@@ -79,12 +79,12 @@ Implementation
 
 The first step was to create a new project using the [angular-cli](https://cli.angular.io/) and to add some modules and components. The auth module contains the login component and also the **_+xstate_**  folder. This folder contains the whole logic around our state machine for the login page. The plus sign it’s just a convention. Using this symbol, it’s very clear on every module where your statecharts' logic is and also the folder is always the first folder in your module.
 
-![](https://miro.medium.com/max/726/1*8BFfgiCUK2k8tu2UCYcThA.png)
+![](/assets/blog/working-with-state-machines/code-structure.png)
 
 Login Page
 ==========
 
-![](https://miro.medium.com/max/1400/1*77dU9QbIHZjiCV-OFqXF6Q.png)Login page
+![](/assets/blog/working-with-state-machines/login-page.png)Login page
 
 In the login page, we just have a form. The state machine is very simple. The main reason for this is that in Angular Reactive Forms the state of the form is “hidden/embedded” in the form instance and it would be a disaster if we tried to replicate this state in our state machine. There is no reason to do something like that.
 
@@ -97,9 +97,35 @@ The behaviour of the login page should be as follows: When the users enter in th
 
 The first step is to define the **_authMachine_** configuration object**_._** We do it with the help of the [**_Machine_**](https://xstate.js.org/docs/guides/machines.html#configuration)  factory function. In this initial configuration, we try to identify all the possible states of our state machine. For the login page particularly, we have an initial state which is the **_boot_** state (from this state we transition immediately either to the **_loggedIn_** or to the **_loggedOut_** state based on a condition). The next state that we can have after the user enters the credentials is either a **_loggedIn_** state if the login is successful or the **_requestErr_** state if the request fails. During the request to the server, we have one more state which is the **_loading_** state. Below, you can see an initial configuration of the state machine based on the states we just defined.
 
-AuthMachine initial configuration
+```
+//AuthMachine initial configuration
+
+export const authMachine = Machine<any, AuthStateSchema>({
+    id: 'login',
+    initial: 'loggedOut',
+    states: {
+        boot: {},
+        loggedOut: {},
+        loggedIn: {},
+        requestErr: {},
+        loading: {}
+    }
+});
+```
 
 XState is written in Typescript and as you may understand it’s very useful to strongly type the state machines. In the above snippet, we have provided the _AuthStateSchema_ generic parameter to the _Machine()_ factory which enables us to determine which keys are allowed in our states configuration object.
+
+```
+export interface AuthStateSchema {
+    states: {
+        boot: {},
+        loggedOut: {};
+        loggedIn: {};
+        requestErr: {};
+        loading: {};
+    };
+}
+```
 
 [Transitions](https://xstate.js.org/docs/guides/transitions.html)
 -----------------------------------------------------------------
@@ -146,12 +172,71 @@ Guards (Conditional Transitions)
 
 In order to implement this conditional logic, we are going to use a special kind of transitions which is called Conditional Transitions or else Guards. Guards are specified on the `.cond` property of a transition. Below you can see the implementation of the `isLoggedOut` guard.
 
+```
+@Injectable()
+export class AuthMachine {
+  authMachineOptions: Partial<MachineOptions<AuthContext, AuthEvent>> = {
+    ...
+    guards: {
+      isLoggedOut: () => !localStorage.getItem('jwtToken')
+    },
+...
+```
+
 [Effects](https://xstate.js.org/docs/guides/effects.html)
 ---------------------------------------------------------
 
 If the current state is the loggedOut state, then we can only send a Submit event. After that, we transition to the _loading_ state. When we enter the loading state, a side effect (_requestLogin_) is invoked which triggers the login API call.
 
+```
+  ...
+  states: {
+    ...
+    loggedOut: {
+      on: {
+        SUBMIT: [
+          {
+            target: 'loading'
+          }
+        ]
+      }
+    },
+    loading: {
+      invoke: {
+        id: 'login',
+        src: 'requestLogin'
+      },on: {
+        SUCCESS: {
+          target: 'loggedIn',
+          actions: ['assignUser', 'loginSuccess']
+        },
+        FAILURE: {
+          target: 'requestErr',
+          actions: ['assignErrors']
+        }
+      }
+      ...
+  }
+```
+
 And the implementation of the side effect:
+
+```
+...
+@Injectable()
+export class AuthMachine {
+  authMachineOptions: Partial<MachineOptions<AuthContext, AuthEvent>> = {
+    services: {
+      requestLogin: (_, event) =>
+        this.authService
+          .login({ email: event.username, password: event.password })
+          .pipe(
+            map(user => new LoginSuccess(user)),
+            catchError(result => of(new LoginFail(result.error.errors)))
+          )
+    }
+...
+```
 
 As we can see, based on the result of this event, we trigger some other events (LoginSuccess, LoginFail) which make our state machine transition to either the loggedIn or the requestErr state.
 
@@ -160,12 +245,33 @@ As we can see, based on the result of this event, we trigger some other events (
 
 Unlike Side effects, Actions are fire-and-forget [“side effects”](https://xstate.js.org/docs/guides/effects.html) which means that after their execution, they don't send any events back to the statechart. We use them in our implementation to update the **context** of the statechart. The context is an extended state which represents quantitive data of our application. If the login is successful, we assign to the context the logged in user (_assignUser_). If the login fails we assign the errors (_assignErrors_). Also, we trigger one more action in order to update the local storage with the user's token (_loginSuccess_). Below, you can see the implementation of these actions.
 
+```
+@Injectable()
+export class AuthMachine {
+  authMachineOptions: Partial<MachineOptions<AuthContext, AuthEvent>> = {
+    ...
+    actions: {
+      assignUser: assign<AuthContext, LoginSuccess>((_, event) => ({
+        user: event.userInfo
+      })),
+      assignErrors: assign<AuthContext, LoginFail>((_, event) => ({
+        errors: Object.keys(event.errors || {}).map(
+          key => `${key} ${event.errors[key]}`
+        )
+      })),
+      loginSuccess: (ctx, _) => {
+        localStorage.setItem('jwtToken', ctx.user.token);
+        this.router.navigateByUrl('');
+      }
+    }
+  };
+```
 Visualise the state machine
 ---------------------------
 
 We can also visualise the final configuration of the state machine and who knows, maybe we could discuss the result with the Business Analyst in our team in order to agree on the final business logic of the login page beforehand.
 
-![](https://miro.medium.com/max/1400/1*KwuXg0jPrq9yAv_4JhbG7A.gif)Visualise state machine
+![](/assets/blog/working-with-state-machines/state-machine-visualization.gif)Visualise state machine
 
 Vision
 ======
