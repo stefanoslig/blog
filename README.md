@@ -1,4 +1,4 @@
-### My bog
+### My blog
 
 [stefanos-lignos.dev](https://stefanos-lignos.dev/)
 
