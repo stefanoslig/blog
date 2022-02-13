@@ -1,5 +1,5 @@
 ---
-title: 'Working with State Machines in Angular (part 1)'
+title: 'Working with State Machines in Angular'
 excerpt: 'Stop trying to make a complex system reliable by testing it, test yourself by trying to rely on simplicity'
 coverImage: '/assets/blog/working-with-state-machines/working-with-state-machines-main-photo.jpeg'
 date: '2022-02-01T05:35:07.322Z'

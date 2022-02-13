@@ -15,10 +15,10 @@ function Index({ allPosts }: Props) {
   return (
     <>
       <Container>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center">
           {allPosts.length ? (
             allPosts.map((post) => (
-              <article key={post.slug} className="xs:11/12 sm:9/12 lg:w-6/12">
+              <article key={post.slug} className="xs:11/12 sm:9/12 lg:w-6/12 mt-8">
                 <Link as={`/posts/${post.slug}`} href="/posts/[slug]">
                   <a className="text-xl leading-6 font-bold text-orange-500">{post.title}</a>
                 </Link>
