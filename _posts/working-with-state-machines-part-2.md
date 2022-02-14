@@ -16,7 +16,15 @@ My main focus on this article was to explain how we can reduce the complexity in
 
 > In my ideal world, the Business Analyst would be responsible for drawing up the state machine configuration as part of the task specification and this state machine would be committed on GitHub or BitBucket ready for revision and part of the actual implementation process. In this way, the team would talk the same language and we would be able to avoid most of the misunderstandings.
 
-One of the reasons, I feel I can focus more on this topic now is the latest tools the team behind XState has released recently.
+One of the major issues every development team has is the miscommunication between its members. In a development team we have people from different backgrounds, different areas of experise. We have people using different vocabulary. People using technical terminology, who can give a detailed explanation of the internals of a system and others who see it as a blackbox. All of them approach the same problem from a different point of view. However all these people have the same goal. The goal is to provide a system which has a specific behaviour for the end user. In this article we're going to explore how we can create a common language for the team by using state machines and statecharts. We want them to have a common source of truth describing the behaviour of the system they're building. One of the reasons, I feel I can focus more on this topic now is the latest tools the team behind XState has released recently.
+
+<!-- ## An example of a miscommunication
+
+We have a team which builds a mail platform. Let's see how a business analyst could describe one of the features of this platform. 
+
+> The platform should contain a toggle button. When this button is on, if there are sensitive data in the mail, a notification appears with a message explaining to the user that there is a danger of exposing sensitive data. This toggle button is OFF by default. The user can set it ON manually or can be automatically on by default based on a setting in the admin panel. -->
+
+
 
 ## Looking back upon the creation of Statecharts
 
