@@ -1,5 +1,5 @@
 ---
-title: 'Working with State Machines in Angular (part 2)'
+title: 'Using State machines as the source of truth in a front-end project'
 excerpt: 'State machines as a single source of truth'
 coverImage: '/assets/blog/working-with-state-machines-part-2/different-worlds.jpg'
 date: '2022-03-01T05:35:07.322Z'
@@ -10,7 +10,7 @@ ogImage:
   url: '/assets/blog/working-with-state-machines-part-2/different-worlds.jpg'
 ---
 
-Some time ago, I wrote the following article [Working with State Machines in Angular ](https://stefanos-lignos.dev/posts/working-with-state-machines). *(If you don't know what a state machine/statechart is, and you want to continue reading this article, I would suggest first to have a look at this article)*
+Some time ago, I wrote this article [Working with State Machines in Angular ](https://stefanos-lignos.dev/posts/working-with-state-machines). *(If you don't know what a state machine/statechart is, and you want to continue reading this article, I would suggest to have a look at this article first)*
 
 My main focus on this article was to explain how we can reduce the complexity in a reactive system by using state machines. Apart from this, I also tried to explain how we can create and use state machines in an Angular project with a library called [XState](https://xstate.js.org/). In this article, I want to focus more on a topic I clumsily touched at the end of my previous article. In the last paragraph I wrote:
 
@@ -37,10 +37,21 @@ answers to questions that seemed more basic, such as
 "What happens when you press this button on the stick
 under all possible circumstances?". 
 
-It was clear to David Harel that what the avionics team was trying to build was a fully reactive system. A system, event-driven, control-driven with an event-response nature, including strict time constraints and parallelism. It was also clear that the real need for a reactive system like this was to provide a clear yet precise description of what the system does, or should do. To specify its behaviour in a language understandable to everyone. To describe the behaviour of such a system the notion of state and a transition to a new state is fundamendal. A Finite state machine could be very useful for this. However, it would not be possible to describe a huge system like this with Finite state machines in an intuitive way. That's why David Harel invented the language for the Statecharts.
+The fighter aircraft the avionics team was trying to build is the perfect example of a fully reactive system. An event-driven, control-driven system with an event-response nature, including strict time constraints and parallelism. The main challenge in this kind of systems is to provide a clear yet precise description of what the system does, or should do. To specify its behaviour in a language understandable to every member of the team. In a language like this the most fundamental part is the notion of State and how we transition to another state based on an event (e.g "When the aircraft is in air-ground mode and you press this button, it goes into air-air mode, but only if there is no radar locked on a ground target at the time"). One mathematical model of computation to descibe transitions between states based on events is the Finite State Machines. Harel, took them one step further by introducing the notion of hierarchy and concurrency so we can describe the behaviour of complex reactive systems with them.
 
-<!-- TODO: make it better--> 
-It's now obvious to me that Statecharts would be the perfect tool to describe the highly reactive nature of the frontend applications. And the magic thing is that everyone is able to understand a diagram. 
+## Coming back to the present 
+
+A lot of the web apps we build nowdays embrace or should embrace the following four traits as they defined in the [The Reactive Manifesto](https://www.reactivemanifesto.org/). They are: 
+ - Responsive —React to users
+ - Scalable —React to load
+ - Resilient —React to failure
+ - Event-driven 
+
+And like the avionics team, most of the teams building reactive systems nowdays experience challenges which originates from the same reason. The difficulty to describe the behaviour of a reactive system in a way that is precise and cannot be misinterpreted from its members.
+
+## Using statecharts as the source of truth
+
+
 
 
 
