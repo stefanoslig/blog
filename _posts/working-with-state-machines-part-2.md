@@ -38,11 +38,33 @@ And like the avionics team, most of the teams building reactive systems nowdays 
 
 ## Working without state machines
 
-In the following sections we're going to use a simple 
+Let's see how a team would communicate without using state machines and let's try to see an example of a miscommunication between the team. The team builds a secure mail platform. In the current sprint the Business Analyst has introduced the following story in the sprint:
 
-## A better approach
+> As a User I want to be notified when my email contains sensitive data so I avoid accidental data leak.
+> 
+> Acceptance Criteria: 
+> 1.  The user will be notified when he tries to send a message to a user in a different domain and when there are sensitive data in the "Subject" or the "Body" of the email. 
+> 2.  There is a toggle button with the label "Secure".
+> 3.  We notify the user when there are sensitive data in his email only when this button is enabled.
+
+Based on how this story is written, the solution from the developer would be that when the toggle button is enabled, on every change we validate the email and if there are sensitive data in the mail we show a notification.
+
+On the next sprint the Business Analyst is coming with the following story:
+
+> As a User I want to be prompted to enable the secure toggle button when my email contains sensitive data so I avoid accidental data leak.
+> 
+> Acceptance Criteria: 
+> 1.  The user will be prompted to enable the secure toggle button when he tries to send a message to a user in a different domain and when there are sensitive data in the "Subject" or the "Body" of the email. 
+
+Only now the developer understands that the logic he implemented in the previous sprint was wrong. The mail data should be validated not only when the toggle button is enabled but also when it is disabled. Now he will have to change his code and some of the work he did in the previous sprint is not valid anymore. This change might be trivial in this example but it makes more visible the main issue in this development approach. The Business Analyst and the developer have a different source of truth. For the Business Analyst the source of truth is the board with the tickets and for the developer is the mainly codebase. It's really hard to keep these two source in sync. 
+
+Also keep in mind that in a team we don't have only the BA and the Developer. We also have the UI/UX people with a different source of truth, Figma for example, the testers with an excel sheet with all the possible scenarios the can think of and so on and so forth. 
+
+How we can make sure that a team has only one source of truth? How we can make sure that the requirements for a story between the team members are in sync all the time? 
 
 ## Using statecharts as the source of truth
+
+Let's see how the problem we saw in the previous paragraphs can be solved by using state machines. In a team like this, the BA would use the  
 
 
 
