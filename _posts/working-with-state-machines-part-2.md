@@ -64,7 +64,9 @@ How we can make sure that a team has only one source of truth? How we can make s
 
 ## Using statecharts as the source of truth
 
-Let's see how the problem we saw in the previous paragraphs can be solved by using state machines. In a team like this, the BA would use the  
+Let's see how the problem we saw in the previous paragraphs can be solved by using state machines. In a team like this, the BA would use a new tool released recently from the team which is behind the XState library. It is a drag and drop visual editor where the BA can build the business logic for this particular feature. The result would be something like this:
+
+![](/public/assets/blog/working-with-state-machines-part-2/stately.png)
 
 
 
