@@ -1,8 +1,8 @@
 ---
 title: 'State machines as the source of truth in a team'
-excerpt: 'State machines as a single source of truth'
+excerpt: 'One of the major issues every development team experiences is miscommunication between its members. In a development team we have people from different backgrounds and areas of expertise. We have people using different vocabulary. All of them approach the same problem from a different point of view. However all these people have the same goal. To provide a system which has a specific behaviour for the end user. In this article we're going to explore how we can create a shared visual language for the whole team by using state machines and statecharts.'
 coverImage: '/assets/blog/working-with-state-machines-part-2/different-worlds.jpg'
-date: '2022-03-01T05:35:07.322Z'
+date: '2022-04-09T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
@@ -16,7 +16,7 @@ My main focus on this article was to explain how we can reduce the complexity in
 
 > In my ideal world, the Business Analyst would be responsible for drawing up the state machine configuration as part of the task specification and this state machine would be committed on GitHub or BitBucket ready for revision and part of the actual implementation process. In this way, the team would talk the same language and we would be able to avoid most of the misunderstandings.
 
-One of the major issues every development team experiences is miscommunication between its members. In a development team we have people from different backgrounds and areas of expertise. We have people using different vocabulary. Team members using technical terminology, who can give a detailed explanation of the internal workings of a system and others who see it as a blackbox. All of them approach the same problem from a different point of view. However all these people have the same goal. The goal is to provide a system which has a specific behaviour for the end user. In this presentation we're going to explore how we can create a shared visual language for the whole team by using state machines and statecharts. We want the team to have a common source of truth to describe the behaviour of the system they're building. One of the reasons, I feel I can focus more on this topic now is the latest tools the team behind XState ([stately.ai](https://stately.ai/)) has released recently.
+One of the major issues every development team experiences is miscommunication between its members. In a development team we have people from different backgrounds and areas of expertise. We have people using different vocabulary. Team members using technical terminology, who can give a detailed explanation of the internal workings of a system and others who see it as a blackbox. All of them approach the same problem from a different point of view. However all these people have the same goal. The goal is to provide a system which has a specific behaviour for the end user. In this article we're going to explore how we can create a shared visual language for the whole team by using state machines and statecharts. We want the team to have a common source of truth to describe the behaviour of the system they're building. One of the reasons, I feel I can focus more on this topic now is the latest tools the team behind XState ([stately.ai](https://stately.ai/)) has released recently.
 
 ## Looking back upon the creation of Statecharts
 
@@ -160,10 +160,15 @@ The next step would be the developer to use the configuration for the state mach
 
 How we can create a statechart with this configuration can be found in the [documentation](https://xstate.js.org/docs/) of the XState project. An example implementation in Angular can be found on this [Github project](https://github.com/stefanoslig/xstate-angular-demo).
 
-We can already see the benefits of this approach. Every time the BA or the developer makes a change at the editor, this change automatically is applied in the actual implementation of the nusiness logic in the codebase and vice versa. Every time the BA creates a diagram in the editor, at the same moment he creates the documentation. In reality he creates a shared visual language, a common source of truth for the whole team. 
+We can already see the benefits of this approach. Every time the BA or the developer makes a change at the editor, this change automatically is applied in the actual implementation of the business logic in the codebase and vice versa. Every time the BA creates a diagram in the editor, at the same moment he creates the documentation. In reality he creates a shared visual language, a common source of truth for the bussines logic for the whole team. 
 
 
 ## What about the QA?
+
+We created a source of truth for the whole team. We saw how we can do this by using the Stately editor(BA perspective) and the XState library which translates the output of the editor to a state machine (developer perspective). But what about the QA people? Apart from having a better understanding of the business logic because of the visual representation of the business logic, do they benefit in any other way?  
+
+The main problem the QA engineers have in a dev team is how to keep up to date the testing scenarios with the actaul implementation and with the user story. We already saw how this problem is solved between the BA and the devs. For the QA, we can do exactly the same thing due to another package in the XState project ([xstate-test](https://github.com/statelyai/xstate/tree/main/packages/xstate-test)). We can use the same source of truth, the configuration of the state machine, to create all the possible test scenarios automatically since we can define deterministically all the possible paths (**all the possible user actions - behaviour**) that can be followed in the state machine.
+
 
 
 
