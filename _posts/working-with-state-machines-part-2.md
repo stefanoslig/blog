@@ -1,8 +1,8 @@
 ---
 title: 'State machines as the source of truth in a team'
-excerpt: 'One of the major issues every development team experiences is miscommunication between its members. In a development team we have people from different backgrounds and areas of expertise. We have people using different vocabulary. All of them approach the same problem from a different point of view. However all these people have the same goal. To provide a system which has a specific behaviour for the end user. In this article we're going to explore how we can create a shared visual language for the whole team by using state machines and statecharts.'
+excerpt: 'In this article we are going to explore how we can create a shared visual language for the whole team by using state machines and statecharts.'
 coverImage: '/assets/blog/working-with-state-machines-part-2/different-worlds.jpg'
-date: '2022-04-09T05:35:07.322Z'
+date: '2022-04-01T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
@@ -60,7 +60,7 @@ On the next sprint the Business Analyst is coming with the following story:
 
 Only now, after one sprint, the developer understands that the logic he implemented in the previous sprint was wrong. The mail data should be validated not only when the toggle button is enabled but also when it is disabled. Now he will have to change his code and some of the work he did in the previous sprint is not valid anymore. This change might be trivial in this example but it makes more visible the main issue in this development approach. The Business Analyst and the developer have a different source of truth. For the Business Analyst the source of truth is the board with the tickets and for the developer is the mainly codebase. It's really hard to keep these two source in sync. Here is a tweet from the creator of XState in the same topic:
 
-![](/public/assets/blog/working-with-state-machines-part-2/code-docs-sync.png)
+![](/assets/blog/working-with-state-machines-part-2/code-docs-sync.png)
 
 Also keep in mind that in a team we don't have only the BA and the Developer. We also have the UI/UX people with a different source of truth, Figma for example, the testers with an excel sheet or another source where they keep all the possible scenarios they can think of and so on and so forth. 
 
@@ -70,7 +70,7 @@ How we can make sure that a team has only one source of truth? How we can make s
 
 Let's see how we can avoid the problem we mentioned in the previous paragraphs by using a shared visual language like statecharts in the development process of the team. The BA apart from writing the story, he would use a new tool released recently from the team which is behind the XState library. This tool is the [Stately Editor](https://stately.ai/registry/new?source=landing-page), a drag-and-drop visual editor which you can use to build the business logic of an app, feature, etc. For the stories we described above, the BA would draw the following diagram (you can play with this diagram and simulate the business logic [here](https://stately.ai/registry/editor/26f82c17-25e6-4851-b465-8c644501cd32) ).
 
-![](/public/assets/blog/working-with-state-machines-part-2/stately.png)
+![](/assets/blog/working-with-state-machines-part-2/stately.png)
 
 The next step would be the developer to use the configuration for the state machine which can be exported from the editor directly to his code. This is the exported configuration. 
 
