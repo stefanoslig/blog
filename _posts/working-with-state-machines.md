@@ -1,6 +1,6 @@
 ---
 title: 'Working with State Machines in Angular'
-excerpt: '"Stop trying to make a complex system reliable by testing it, test yourself by trying to rely on simplicity". I thought that it would be nice to start with my personal motto on software development and of course, part of this article revolves around this notion. However, you may wonder how the complexity of software is related to State Machines. Keep reading and...'
+excerpt: 'Stop trying to make a complex system reliable by testing it, test yourself by trying to rely on simplicity'
 coverImage: '/assets/blog/working-with-state-machines/working-with-state-machines-main-photo.jpeg'
 date: '2022-02-01T05:35:07.322Z'
 author:
