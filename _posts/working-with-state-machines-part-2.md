@@ -93,15 +93,21 @@ The next step would be the developer using the configuration for the state machi
             "src": "validate"
           },
           "on": {
-            "validatingDraftSuccess": {
-              "cond": "isInvalid",
-              "target": "PROMPT"
-            }
+            "validatingDraftSuccess": [
+              {
+                "cond": "isInvalid",
+                "target": "PROMPT"
+              },
+              {
+                "target": "VALID"
+              }
+            ]
           }
         },
         "PROMPT": {
           "type": "final"
-        }
+        },
+        "VALID": {}
       },
       "on": {
         "toggle": {
@@ -170,7 +176,13 @@ We can already see the benefits of this approach. Every time the BA or the devel
 
 We created a source of truth for the whole team. We saw how we can do this by using the Stately editor(BA perspective) and the XState library which translates the output of the editor to a state machine (developer perspective). But what about the QA people? Apart from having a better understanding of the business logic because of the visual representation of the business logic, do they benefit in any other way?  
 
-The main problem the QA engineers have in a dev team is how to keep up to date the testing scenarios with the actual implementation and with the user story. We already saw how this problem is solved between the BA and the devs. For the QA, we can do exactly the same thing due to another package in the XState project ([xstate-test](https://github.com/statelyai/xstate/tree/main/packages/xstate-test)). We can use the same source of truth, the configuration of the state machine, to create all the possible test scenarios automatically since we can define deterministically all the possible paths (**all the possible user actions - behaviour**) that can be followed in the state machine.
+The main problem the QA engineers have in a dev team is how to keep up to date the testing scenarios with the actual implementation and with the user story. We already saw how this problem is solved between the BA and the devs. For the QA, we can do exactly the same thing due to another package in the XState project ([xstate-test](https://github.com/statelyai/xstate/tree/main/packages/xstate-test)). Using this package we can introduce the [model-based testing](https://en.wikipedia.org/wiki/Model-based_testing) strategy. Model-based testing is a software testing technique where the behavior of software under test is checked against predictions made by a model. A model is a description of a system’s behavior. In our case we can use the state machine, our source of truth, as a model from which we can generate automatically all the possible test scenarios since we can define deterministically all the possible paths (**all the possible user actions - behaviour**) that can be followed in the state machine.
+
+Because this is a big topic on its own, stay tuned for the next article where we're going to focus more on how we can introduce model-based testing using our state machines and Cypress.
+
+
+
+
 
 
 
