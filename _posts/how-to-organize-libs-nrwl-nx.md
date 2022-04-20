@@ -11,8 +11,7 @@ ogImage:
 ---
 
 
-In this article you can find a real world example and a short explanation of how you can organize the libs in an Angular nrwl/nx monorepo. You can find the code on the following [Github](https://github.com/stefanoslig/organize-nx-libs-article-demo. 
-) repository.
+In this article you can find a real world example and a short explanation of how you can organize the libs in an Angular nrwl/nx monorepo. You can find the code on the following [Github](https://github.com/stefanoslig/organize-nx-libs-article-demo) repository.
 
 In this project, there is one app (learning-cube) which consumes the libraries under the libs folder. 
 
