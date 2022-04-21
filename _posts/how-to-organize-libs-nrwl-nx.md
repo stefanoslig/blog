@@ -2,7 +2,7 @@
 title: 'How to organize your libs in a nrwl/nx monorepo'
 excerpt: 'In this article you can find a real world example and a short explanation of how you can organize the libs in an Angular nrwl/nx monorepo'
 coverImage: '/assets/blog/organize-your-libs-in-nx-monorepo/building-blocks.jpeg'
-date: '2022-02-01T05:35:07.322Z'
+date: '2022-04-22T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
