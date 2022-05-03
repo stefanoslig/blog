@@ -36,11 +36,11 @@ libs
 		> utils-testing
 ~~~
 
-I used two classifiers to name my libraries. The first classifier is the **scope** and the second the **type**. The main reason is that I want every developer when he looks a library to understand where this library can be used and which kind of services/components/etc contains. 
+I used two classifiers to name my libraries. The first classifier is the **scope** and the second the **type**. The main reason is that I want every developer when he looks at a library to understand where this library can be used and which kind of services/components/etc it contains. 
 
-The **scope** is the section (domain) of the app the library can be used. In this project, the scope is a section of the app since I have only one app. In a repository with more than one apps, the scope can be each one of these apps. The **scope** gives a clear indication that a feature belongs to a specific domain. For example the libraries under the **learnings** scope, are used in the learnings page, the libraries under the **users** scope in the users page and the libraries under the **shared** scope can be reused between all the sections of the app.
+The **scope** is the section (domain) of the app the library can be used for. In this project, the scope is a section of the app since I have only one app. In a repository with more than one app, the scope can be each one of these apps. The **scope** gives a clear indication that a feature belongs to a specific domain. For example the libraries under the **learnings** scope, are used in the learnings page, the libraries under the **users** scope in the users page and the libraries under the **shared** scope can be reused between all the sections of the app.
 
-The **type** indicates the purpose of a library. I have used 5 different types (feature, data-access, ui, feature-shell, utils) The **feature-...** type contains smart components. These are components which enable the communication with the data-sources (most likely they inject api services). The **data-access** type contains  code for interacting with the server. An example is from the **users-data-access** library:
+The **type** indicates the purpose of a library. I have used 5 different types (feature, data-access, ui, feature-shell, utils). The **feature-...** type contains smart components. These are components which enable the communication with the data-sources (most likely they inject api services). The **data-access** type contains code for interacting with the server. An example from the **users-data-access** library is:
 ~~~
 users
 	> data-access
@@ -48,11 +48,11 @@ users
 		> learnings-store.service
 ~~~ 
 
-The **ui** type contains dumb (presentational) components. These components are reusable in the scope of this library. In this project we have a **ui** library only in the shared folder. The components of this library can be used on every other library. However, we could also have domain specific presentational components. In this case, the **ui** library would be under the **learnings** or **users** scope and could be used only in the libraries that belong to this domain.
+The **ui** type contains dumb (presentational) components. These components are reusable in the scope of this library. In this project we have a **ui** library only in the shared folder. The components of this library can be used with every other library. However, we could also have domain specific presentational components. In this case, the **ui** library would be under the **learnings** or **users** scope and could be used only in the libraries that belong to this domain.
 
 The **feature-shell** is the glue between the **feature-...** libs and most likely is a lazy loaded module. In this project, they are lazy loaded modules (you can see it in the **app-routing.module** file).  
 
-The **utils** libraries is used here to keep some mock data and services for the testing. Generally they contain low level code used by from all the other libraries in the same scope.
+The **utils** libraries are used here to keep some mock data and services for the testing. Generally they contain low level code used by all the other libraries in the same scope.
 
 That was an example of how you can organize your libraries in a nrw/nx monorepo. I hope you found it useful.
 
