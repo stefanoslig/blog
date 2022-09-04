@@ -26,8 +26,17 @@ So what if instead of sharing infrormation between all the running instances of 
 
 ### The solution in simple words
 
-In applications using NgRx the only way to change the global state is through actions. Pure functions which we call reducers take the previous state and an action and they return the next state. Because of the fact that reducers are pure functions we can be sure that if we dispatch the same actions (actions without side effects) in the same order multiple times in an app, the value of the state will be the same every time. That also means that if we have two instances of the same app running in parallel and we dispatch in both the same actions, both of them will end up having the same state. So if we want to synchronize the state between two or three apps running in iframes, we need to make sure that the same actions will be dispatched to all of them. What if we had a way to share the dispatched actions from one app to any other instance of the app running in an iframe or tab or window? After all the actions are just plain objects. They can be serialized and shared between a communication channel.
+In applications using NgRx the only way to change the global state is through actions. Pure functions which we call reducers take the previous state and an action and they return the next state. Because of the fact that reducers are pure functions we can be sure that if we dispatch the same actions (actions without side effects) in the same order multiple times in an app, the value of the state will be the same every time. That also means that if we have two instances of the same app running in parallel and we dispatch in both the same actions, both of them will end up having the same state. So if we want to synchronize the state between two or three apps running in iframes, we need to make sure that the same actions will be dispatched to all of them. What if we had a way to share the dispatched actions from one app to any other instance of the app running in an iframe or a tab or a window? The actions are just plain objects. They can be serialized and shared between a communication channel.
 
+
+In our case the communication channel which we're going to use to share the actions is the Broadcast Channel API. When a broadcast channel is created, we can subsribe to it from any browsing context in the same origin and listen for messages posted to it. In the following image we have the same application running in two iframes. Let's assume that this application uses NgRx. When the first instance of the application dispatches an action, this action will also be posted as a message to the broadcast channel. The second instance which has subscribed to this channel, will listen to the message and when it receives it, it will dispatch the action in this instance as well. As we described in the previous paragraph, when we have the same actions dispatched, we know for sure that the global state of the application will be the same and synchronized between all the running instances of the app.
+
+
+![shared actions](/assets/blog/synchronizing-app-state-across-iframes/shared-actions.png)
+
+### The code
+
+For our solution, the first thing we have to do is to create a broadcast channel service. This service will have two methods. One method to post messages in the broadcast channel and 
 
 
 
