@@ -81,3 +81,4 @@ export class BroadcastChannelService implements OnDestroy {
 Let's see now how we can use this service in our solution.
 
 
+
