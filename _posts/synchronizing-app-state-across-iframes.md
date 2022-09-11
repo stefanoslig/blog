@@ -36,7 +36,48 @@ In our case the communication channel which we're going to use to share the acti
 
 ### The code
 
-For our solution, the first thing we have to do is to create a broadcast channel service. This service will have two methods. One method to post messages in the broadcast channel and 
+For our solution, the first thing we have to do is to create a broadcast channel service. From this service we can post messages to the broadcast channel. The messages we post are of type `Action`.
 
+```ts
+postMessage(message: Action): void {
+  this.broadcastChannel.postMessage(message);
+}
+```
+
+In this service we also listen for the posted messages in the broadcast channel and we pass them as values to a `Subject<Action>`. This `Subject` will be used later in the broadcast channel's effects.
+
+```ts
+this.broadcastChannel.onmessage = (message) =>
+  this.ngZone.run(() => this._onMessage$.next(message.data));
+```
+
+And this is how the service looks like:
+
+```ts
+@Injectable({
+  providedIn: 'root',
+})
+export class BroadcastChannelService implements OnDestroy {
+  private readonly broadcastChannel!: BroadcastChannel;
+  private readonly _onMessage$ = new Subject<Action>();
+  readonly onMessage$ = this._onMessage$.asObservable();
+
+  constructor(private readonly ngZone: NgZone) {
+    this.broadcastChannel = new BroadcastChannel('broadcastChannelName');
+    this.broadcastChannel.onmessage = (message) =>
+      this.ngZone.run(() => this._onMessage$.next(message.data));
+  }
+
+  postMessage(message: Action): void {
+    this.broadcastChannel.postMessage(message);
+  }
+
+  ngOnDestroy() {
+    this.broadcastChannel.close();
+  }
+}
+```
+
+Let's see now how we can use this service in our solution.
 
 
