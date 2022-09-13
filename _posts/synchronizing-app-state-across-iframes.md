@@ -53,6 +53,7 @@ this.broadcastChannel.onmessage = (message) =>
 
 And this is how the service looks like:
 
+`broadcast-channel.service.ts`
 ```ts
 @Injectable({
   providedIn: 'root',
@@ -78,7 +79,62 @@ export class BroadcastChannelService implements OnDestroy {
 }
 ```
 
-Let's see now how we can use this service in our solution.
+
+Let's see now how we can achieve the synchronization of the state. In the code we have configured an Array of Actions that we want to listen in the `broadcast-channel.effects.ts`. As we explained in a previous paragraph these should be actions which doesn't have side effects. In my example application I have used an `InjectioToken` to setup this array of Actions so I can benefit from Angular's DI mechanism.
+
+`app.module.ts`
+```ts
+{
+  provide: BROADCAST_CHANNEL_ACTIONS,
+  useValue: [
+    lessonsActions.assignLessonSuccess,
+    lessonsActions.deleteLessonSuccess,
+    studentsActions.addStudentSuccess,
+    studentsActions.deleteStudentSuccess,
+  ],
+},
+```
+
+Every time we dispatch one of these actions, in the `broadcast-channel.effects` we're going to listen to it and then we're going to post a message with the Action as the payload. To post the message to the broadcast channel we use the `postMessage` method from the `broadcast-channel.service.ts`. 
+
+`broadcast-channel.effects.ts`
+```ts
+broadcastActions$ = createEffect(
+  () =>
+    this.actions$.pipe(
+      ofType(...this.bcActions),
+      tap((action) => this.bcService.postMessage(action))
+    ),
+  { dispatch: false }
+);
+```
+
+Since we have posted this message to the broadcast channel, every application which runs in an iframe and has subscribed to this channel, will listen to this message and will push the value of the message to the `onMessage$` `Subject`. We know that the value of the message will be always an `Action`. In the effects we have subscribed to the `onMessage$` `Subject` and when it emits its value which is an Action, we are going to dispatch the same Action so it can be listened from the relevant reducer.
+
+`broadcast-channel.effects.ts`
+```ts
+onMessage$ = createEffect(() =>
+  this.bcService.onMessage$.pipe(
+    map((action) => ({
+      ...action,
+      type: `[Broadcasted ${action.type.replace(/\[/g, '')}`,
+    }))
+  )
+);
+```
+
+To avoid an infinite loop because of the `broadcastActions$` effect, we add the word `Broadcasted`  in the type of the Action we dispatch from the `onMessage$` effect.
+
+Now the reducer will listen also to this `Action` and will update the store accordingly.
+
+`reducer`
+```ts
+on(
+  { type: '[Domain] my action', { payload } },
+  { type: '[Broadcasted Domain] my action', { payload } },
+  ...
+```
+
 
 
 
