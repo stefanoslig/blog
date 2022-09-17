@@ -135,6 +135,18 @@ on(
   ...
 ```
 
+There is one missing piece in this solution. What if we have two iframes but the application in the second iframe started running after some actions have been already dispatched in the first iframe? That means that the application in the second iframe won't have the same initial state as the one in the first iframe. Even if we dispatch the same actions in both of them using the mechanism we already implemented, the final state won't be the same.
+
+The idea to solve this problem is very simple. When an application in the second iframe starts running, it will dispatch an action to request the initial state in case there are application on different iframes running already. Using the same effect as before, this action will be posted to the broadcast channel. If there is another application running on a different iframe, it will listen to this action using a specific effect. Then in this effect we select the current state from the store and we send it back as a payload of a different action. This action will be listened from the iframe which asked for the initial state and a meta-reducer will set the initial state based on the state which is returned as a playload to the action.
+
+
+![initial state](/assets/blog/synchronizing-app-state-across-iframes/initial-state.png)
+
+
+
+
+
+
 
 
 
