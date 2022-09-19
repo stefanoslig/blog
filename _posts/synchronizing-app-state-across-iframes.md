@@ -2,7 +2,7 @@
 title: 'Synchronizing app state across iframes using NgRx and the Broadcast Channel API'
 excerpt: 'In this article, we are going to see how we can use the Broadcast Channel API to synchronize an application state across iframes.'
 coverImage: '/assets/blog/synchronizing-app-state-across-iframes/main-photo.jpeg'
-date: '2022-09-14T05:35:07.322Z'
+date: '2022-09-18T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
@@ -131,6 +131,8 @@ on(
   ...
 ```
 
+### Requesting the initial state
+
 There is one missing piece in this solution. What if we have two iframes but the application in the second iframe started running after some actions have been already dispatched in the first iframe? That means that the application in the second iframe won't have the same initial state as the one in the first iframe. Even if we dispatch the same actions in both of them using the mechanism we already implemented, the final state won't be the same.
 
 The idea to solve this problem is very simple. When an application in the second iframe starts running, it will dispatch an action to request the initial state in case there are applications on different iframes running already. Using the same effect as before, this action will be posted to the broadcast channel. If there is another application running on a different iframe, it will listen to this action using a specific effect. Then in this effect, we select the current state from the store and we send it back as the payload of an action. The iframe which asked for the initial state will listen to this action and a meta-reducer will set the initial state based on the state which is returned as the payload.
@@ -200,11 +202,9 @@ export function bcStateInitializer(
 
 And that's all...now you should be able to synchronize the state betweeen iframes/windows/tabs. Why I personally like this solution is because it offers a very simple mental model, makes the code very predictable and it scales quite well. 
 
-Feel free to check the demo app I created for this article in this [Github repo](https://github.com/stefanoslig/broadcast-channel-ngrx-demo).
-
 ![demo gif](/assets/blog/synchronizing-app-state-across-iframes/demo.gif)
 
-Thank you!
+Feel free to check the demo app I created for this article in this [Github repo](https://github.com/stefanoslig/broadcast-channel-ngrx-demo).
 
 
 
