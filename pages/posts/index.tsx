@@ -18,15 +18,26 @@ function Index({ allPosts }: Props) {
         <div className="flex flex-col items-center">
           {allPosts.length ? (
             allPosts.map((post) => (
-              <article key={post.slug} className="xs:11/12 sm:9/12 lg:w-6/12 mt-8">
-                <Link as={`/posts/${post.slug}`} href="/posts/[slug]">
-                  <a className="text-xl leading-6 font-bold text-orange-500">{post.title}</a>
+              <article
+                key={post.slug}
+                className="xs:11/12 sm:9/12 lg:w-6/12 mt-8"
+              >
+                <Link
+                  as={`/posts/${post.slug}`}
+                  href="/posts/[slug]"
+                  className="text-xl leading-6 font-bold text-orange-500"
+                >
+                  {post.title}
                 </Link>
                 <p className="text-lg">{post.excerpt}</p>
                 <div className="text-gray-400 flex justify-between text-lg">
                   <DateFormatter dateString={post.date} />
-                  <Link as={`/posts/${post.slug}`} href="/posts/[slug]">
-                    <a className="text-orange-500">read more...</a>
+                  <Link
+                    as={`/posts/${post.slug}`}
+                    href="/posts/[slug]"
+                    className="text-orange-500"
+                  >
+                    read more...
                   </Link>
                 </div>
               </article>
