@@ -12,7 +12,7 @@ ogImage:
 
 ### Introduction
 
-In version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25), Angular allowed guards and resolvers to be plain functions. In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22), the Angular team deprecated Class and `InjectionToken` guards and resolvers. Of course, we will still be able to use class-based guards and resolvers if we want in our applications. The way to do this is by using some helpers functions (`mapToCanMatch` or `mapToCanActivate`). All the provided hepler functions can be found [here](https://github.com/angular/angular/blob/main/packages/router/src/utils/functional_guards.ts).
+In version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25), Angular allowed guards and resolvers to be plain functions. In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22), the Angular team deprecated Class and `InjectionToken` guards and resolvers. Of course, we will still be able to use class-based guards and resolvers if we want in our applications. The way to do this is by using some helper functions (`mapToCanMatch` or `mapToCanActivate`). All the provided hepler functions can be found [here](https://github.com/angular/angular/blob/main/packages/router/src/utils/functional_guards.ts).
 
 In spite of the fact that we can still use both ways of authoring our resolvers and guards, there is in my opinion a subtle preference of the Angular team in the functional approach. During this transition from the class-based to the functional approach and taking also into account the fact that a lot of developers working with Angular are not yet fully familiriazed with the `inject()` function, I imagine there will be some questioning on how we write unit tests for the  functional resolvers and guards.
 
@@ -56,6 +56,8 @@ class ResolverTestService {
 }
 ```
 
+[stackblitz](https://stackblitz.com/edit/angular-2kiv4w?file=src/app/hero-detail/hero-detail.resolver.spec.ts)
+
 ### Testing functional resolvers and guards (No Testbed required)
 
 The second way to test a resolver or a guard doesn't require using `TestBed`. To do this, we need to modify a little bit the resolver or the guard, so it can accept the injectable(s) as a parameter with a default value. To do this we need to extract the main logic of the resolver or guard in a separate function as you can see in the following code snippet.
@@ -98,9 +100,11 @@ describe('heroResolver', () => {
 
 ```
 
+[stackblitz](https://stackblitz.com/edit/angular-2kiv4w-t4vxhd?file=src/app/hero-detail/hero-detail.resolver.spec.ts)
+
 ### Testing functional resolvers and guards (recomended way - Angular version 14.1 - 15.1)
 
-In version `14.1.0`, the Angular team introduced the `EnvironmentInjector.runInContext` method as a handy way to run a function in the context of the injector. In our test can use this method after injecting the `EnvironmentInjector` class.
+In version `14.1.0`, the Angular team introduced the `EnvironmentInjector.runInContext` method as a handy way to run a function in the context of the injector. In our test, we can use this method after injecting the `EnvironmentInjector` class.
 
 ```ts
 const mockRoute = { params: { id: 100 } } as unknown as ActivatedRouteSnapshot;
@@ -124,9 +128,11 @@ describe('heroResolver', () => {
 });
 ```
 
+[stackblitz](https://stackblitz.com/edit/angular-2kiv4w-kjf7x5?file=src/app/hero-detail/hero-detail.resolver.spec.ts)
+
 ### Testing functional resolvers and guards (recomended way - Angular version > 15.1)
 
-In version `15.1.0` the `EnvironmentInjector.runInContext` was deprecated, in favor of the Add `TestBed.runInInjectionContext` to help test functions which use `inject` ([#47955](https://github.com/angular/angular/pull/47955)).
+In version `15.1.0` the `EnvironmentInjector.runInContext` was deprecated, in favor of the Add `TestBed.runInInjectionContext` to help test functions which use `inject` ([#47955](https://github.com/angular/angular/pull/47955)). So, we can write our tests like this:
 
 ```ts
 it('should return the requested hero', () => {
@@ -137,9 +143,11 @@ it('should return the requested hero', () => {
   });
 ```
 
+[stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s4bhsp?file=src/app/hero-detail/hero-detail.resolver.spec.ts)
+
 ### Testing functional resolvers and guards (recomended way - using runInInjectionContext - after 16.0.0-next.3)
 
-In version `16.0.0-next.3`, a new standalone function (`runInInjectionContext`) was added so we can run a function with access to inject tokens from any injector (not only the `EnvironmentInjector`). So the above thest can also be written using this standalone API.
+In version `16.0.0-next.3`, a new standalone function (`runInInjectionContext`) was added so we can run a function with access to inject tokens from any injector (not only the `EnvironmentInjector`). So the above test can also be written using this standalone API.
 
 ```ts
   it('should return the requested hero', () => {
