@@ -12,17 +12,17 @@ ogImage:
 
 ### Introduction
 
-In version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25), Angular allowed guards and resolvers to be plain functions. In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22), the Angular team deprecated Class and `InjectionToken` guards and resolvers. Of course, we will still be able to use class-based guards and resolvers if we want in our applications. The way to do this is by using some helper functions (`mapToCanMatch` or `mapToCanActivate`). All the provided helper functions can be found [here](https://github.com/angular/angular/blob/main/packages/router/src/utils/functional_guards.ts).
+In version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25), Angular allowed guards and resolvers to be plain functions. In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22), the Angular team deprecated Class and `InjectionToken` guards and resolvers. Of course, we will still be able to use class-based guards and resolvers if we would like to. The way to do this is by using some helper functions (`mapToCanMatch` or `mapToCanActivate`). All the provided helper functions can be found [here](https://github.com/angular/angular/blob/main/packages/router/src/utils/functional_guards.ts).
 
-In spite of the fact that we can still use both ways of authoring our resolvers and guards, there is in my opinion a subtle preference of the Angular team for the functional approach. During this transition from the class-based to the functional approach and taking also into account the fact that a lot of developers working with Angular are not yet fully familiarized with the `inject()` function, I imagine there will be some questioning on how we write unit tests for the  functional resolvers and guards.
+In spite of the fact that we can still use both ways of authoring our resolvers and guards, there is, in my opinion, a subtle preference in the Angular team for the functional approach. During this transition from the class-based to the functional approach, while taking into account the fact that a lot of developers working with Angular are not yet fully familiarized with the `inject()` function, I imagine there will be some questions on how we write unit tests for the  functional resolvers and guards.
 
-Here is a list of all the different ways we can use to write these unit tests. Different versions of Angular give us different capabilities to do that. I tried to include all of them. In all of these cases, the error we try to avoid is the following one:
+Here is a list of all the different ways we can write these unit tests. Different versions of Angular give us different capabilities to do that. I tried to include all of them. In all of these cases, the error we try to avoid is the following one:
 
 > NG0203: `inject()` must be called from an injection context such as a constructor, a factory function, a field initializer, or a function used with `EnvironmentInjector#runInContext`.
 
 ### Testing functional resolvers and guards (The hacky way)
 
-The first way we're going to show is quite hacky and not recommended since there are better solutions at the moment. What we simply do in this solution is that we create a helper class `ResolverTestService`. We call the functional resolver inside this class. In this way, if we have any dependencies injected using the `inject` function inside the resolver, we make sure that the injection context is available when we call the resolver. 
+The first way we're going to show is quite hacky and not recommended since there are better solutions at the moment. In this solution, we simply create a helper class `ResolverTestService`. We call the functional resolver inside this class. In this way, if we have any dependencies injected using the `inject` function inside the resolver, we make sure that the injection context is available when we call the resolver. 
 
 ```ts
 describe('heroResolver', () => {
@@ -60,7 +60,7 @@ class ResolverTestService {
 
 ### Testing functional resolvers and guards (No Testbed required)
 
-The second way to test a resolver or a guard doesn't require using `TestBed`. To do this, we need to modify a little bit the resolver or the guard, so it can accept the injectable(s) as a parameter with a default value. To do this we need to extract the main logic of the resolver or guard in a separate function as you can see in the following code snippet.
+The second way to test a resolver or a guard doesn't require using `TestBed`. To do this, we need to modify the resolver or the guard a little bit, so it can accept the injectable(s) as a parameter with a default value. To do this we need to extract the main logic of the resolver or guard in a separate function as you can see in the following code snippet.
 
 ```ts
 export const heroResolver: ResolveFn<Hero> = (
