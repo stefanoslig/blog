@@ -2,7 +2,7 @@
 title: 'Testing functional resolvers and guards in Angular'
 excerpt: 'In this article we are going to explore all the different ways we can test functional guards and resolvers in an Angular project.'
 coverImage: '/assets/blog/testing-functional-guards-and-resolvers/testing-functional-resolvers.png'
-date: '2023-04-01T05:35:07.322Z'
+date: '2023-03-21T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
