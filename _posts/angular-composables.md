@@ -102,9 +102,24 @@ export class StudentsComponent {
 }
 ```
 
+What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. From this function we return the state we want to be exposed in the component. In our example we initialized the `mouse` field. 
+
+*** Because this function injects the `DOCUMENT` token using the `inject` function can only be used in construction context (i.e. in the of constructor, fields initialization) but not in the component's lifecycle hooks for example ***
+
+Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example , unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
+
+// maybe need to explain a little bit more the code above (e.g signals, naming convention) ?
+
+### Why not exposing the same logic in a service?
+
+// Some ideas to elaborate on...
+- Tent to become complex files including the logic for too many different things. 
+- Easier re-used, nested to each other (enable us to compose complex logic using small, isolated units, similar to how we compose an entire application using components.)
+- Require more boilerplate
+- Require more in-depth knowledge of Angular features (Injectable/providers)
 
 ### Conventions and Best Practices
 
-### Why not using services?
+It is a convention to name composable functions with camelCase names that start with "use".
 
 https://github.com/stefanoslig/angular-composables-demo
