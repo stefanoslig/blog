@@ -102,13 +102,26 @@ export class StudentsComponent {
 }
 ```
 
-What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. From this function we return the state we want to be exposed in the component. In our example we initialized the `mouse` field. 
+What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. Here are some conventions and best practices we follow:
+
+#### Naming
+
+It is a convention to name composable functions with camelCase names that start with "use".
+
+
+#### Return Values
+
+From this function we return the state we want to be exposed in the component. The state consists of one or more Signals which can be used in the template of our component or other computed properties or effects. In our example we initialized the `mouse` field with the `useMouse` composable which returns two signals.
+
+#### Usage Restrictions
 
 *** Because this function injects the `DOCUMENT` token using the `inject` function can only be used in construction context (i.e. in the of constructor, fields initialization) but not in the component's lifecycle hooks for example ***
 
 Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example , unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
 
-// maybe need to explain a little bit more the code above (e.g signals, naming convention) ?
+### Async State Example
+
+
 
 ### Why not exposing the same logic in a service?
 
@@ -118,8 +131,24 @@ Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you
 - Require more boilerplate
 - Require more in-depth knowledge of Angular features (Injectable/providers)
 
-### Conventions and Best Practices
 
-It is a convention to name composable functions with camelCase names that start with "use".
+### What about testing?
 
-https://github.com/stefanoslig/angular-composables-demo
+1. Using Tetsbed
+2. Mocked providers as default values in parameters
+
+
+
+Notes:
+
+/**
+//https://github.com/angular/angular/blob/2703fd626040c5e65401ebd776404a3b9e284724/packages/core/src/signals/README.md
+
+ReactiveNodes keep track of dependency ReactiveEdges to each other. Producers are aware of which consumers depend on their value, while consumers are aware of all of the producers on which they depend. These references are always bidirectional.
+
+A major design feature of Angular Signals is that dependency edges (ReactiveEdges) are tracked using weak references (WeakRef). At any point, it's possible that a consumer node may go out of scope and be garbage collected, even if it is still referenced by a producer node (or vice versa). This removes the need for explicit cleanup operations that would remove these dependency edges for signals going "out of scope". Lifecycle management of signals is greatly simplified as a result, and there is no chance of memory leaks due to the dependency tracking.
+ */
+
+ /** 
+Yes! You can create and read signals in components, services, regular functions, top-level JS module code - anywhere you might need a reactive primitive. We see this as a huge benefit of signals - reactivity is not exclusively contained within components. Signals empower you to model data flow without being constrained by the visual hierarchy of a page
+*/ 
