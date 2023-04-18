@@ -12,6 +12,8 @@ ogImage:
 
 ### Introduction
 
+***Disclaimer _______ ***
+
 In version 16.0.0-next.0 the Angular team introduced a very first implementation of `Signals` which is a reactive primitive which can offer fine-grained reactivity in Angular. With such big changes like a new reactive primitive, considering also other very useful features the Angular team has introduced in the latest versions like the [inject](https://angular.io/api/core/testing/inject) function or the concept of [DestroyRef](https://next.angular.io/api/core/DestroyRef), it's anavoidable that new patterns will emerge. 
 
 This article is an attempt to explore and give a name to something that maybe a lot of you have already thought. A new pattern that can emerge out of the introduction of `Signals`. This is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time.
@@ -121,13 +123,61 @@ Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you
 
 ### Async State Example
 
+The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch automatically the data, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable as you can see in the following snippet.
 
+```ts
+export function useFetch<D>(url: Signal<string>) {
+  const data = signal<D | null>(null);
+  const error = signal<Error | null>(null);
+
+  async function doFetch() {
+    const urlValue = url();
+
+    try {
+      // artificial delay / random error
+      await timeout();
+
+      const res = await fetch(urlValue);
+      data.set(await res.json());
+      error.set(null);
+    } catch (e) {
+      data.set(null);
+      error.set(e as Error);
+    }
+  }
+
+  effect(doFetch);
+
+  return { data, error, retry: doFetch };
+}
+```
+
+Which can be used in the component like this:
+
+```ts
+@Component({
+  standalone: true,
+  template: `
+    ...
+      <p>Oops! Error encountered: {{ fetch.error()?.message }}</p>
+      <button (click)="fetch.retry()">Retry</button>
+    ...
+  `,
+  imports: [NgFor, JsonPipe, NgIf],
+})
+export class UsersComponent {
+  ...
+  url = computed(() => baseUrl + this.id());
+
+  fetch = useFetch(this.url);
+}
+```
 
 ### Why not exposing the same logic in a service?
 
 // Some ideas to elaborate on...
 - Tent to become complex files including the logic for too many different things. 
-- Easier re-used, nested to each other (enable us to compose complex logic using small, isolated units, similar to how we compose an entire application using components.)
+- Easier re-used, more flexible, nested to each other (enable us to compose complex logic using small, isolated units, similar to how we compose an entire application using components.)
 - Require more boilerplate
 - Require more in-depth knowledge of Angular features (Injectable/providers)
 
