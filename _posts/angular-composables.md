@@ -12,21 +12,21 @@ ogImage:
 
 ### Introduction
 
-***Disclaimer _______ ***
+*Composables is not a new idea. It's a concept coming from `Vue.js`. A lot of the examples and ideas I use in this blog come directly from [Vue.js Composables](https://vuejs.org/guide/reusability/composables.html) docs.*
 
 In version 16.0.0-next.0 the Angular team introduced a very first implementation of `Signals` which is a reactive primitive which can offer fine-grained reactivity in Angular. With such big changes like a new reactive primitive, considering also other very useful features the Angular team has introduced in the latest versions like the [inject](https://angular.io/api/core/testing/inject) function or the concept of [DestroyRef](https://next.angular.io/api/core/DestroyRef), it's anavoidable that new patterns will emerge. 
 
-This article is an attempt to explore and give a name to something that maybe a lot of you have already thought. A new pattern that can emerge out of the introduction of `Signals`. This is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time.
+This article is an attempt to explore and give a name to something that maybe some of you have already thought. A new concept that can emerge out of the introduction of `Signals`. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time.
 
 ### What is a "Composable"?
 
-*** I'm copying this section and the example from Vue's docs since it's very well written there ***
+A "composable" in the context of an Angular application is a function which encapsulates stateful logic using the Signal's API. The composables can be re-used in multiple components, can be nested within each other and they can help us to organize the stateful logic of our components into small, flexible and simpler units.
 
-In the context of Angular applications, a "composable" is a function that leverages Angular's Signals API to encapsulate and reuse **stateful logic**. 
+In the same way, we create util functions in order to reuse stateless logic across our components, we create  composables to share stateful logic. You can check some if the use cases [here](https://vueuse.org/functions.html).   
 
-When building frontend applications, we often need to reuse logic for common tasks. For example, we may need to format dates in many places, so we extract a reusable function for that. This formatter function encapsulates stateless logic: it takes some input and immediately returns expected output. There are many libraries out there for reusing stateless logic - for example lodash and date-fns, which you may have heard of.
+But let's see how a composable would look like in an Angular application (in the following examples I don't use the API which is proposed in the RFC for Angular Signals). When this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write very useful composables for every Angular app.
 
-By contrast, stateful logic involves managing state that changes over time. A simple example would be tracking the current position of the mouse on a page. In real-world scenarios, it could also be more complex logic such as touch gestures or connection status to a database.
+But let's start with a very simple exaple.
 
 ### Mouse Tracker Example
 
@@ -37,7 +37,7 @@ In an Angular component using Signals, the mouse tracking functionality would lo
   standalone: true,
   template: ` {{ x() }} {{ y() }} `,
 })
-export class StudentsComponent implements AfterViewInit, OnDestroy {
+export class MouseTrackerComponent implements AfterViewInit, OnDestroy {
   // injectables
   document = inject(DOCUMENT);
 
@@ -99,7 +99,7 @@ And now it can be use in all the different components like this:
   standalone: true,
   template: ` {{ mouse.x() }} {{ mouse.y() }} `,
 })
-export class StudentsComponent {
+export class MouseTrackerComponent {
   mouse = useMouse();
 }
 ```
@@ -173,6 +173,9 @@ export class UsersComponent {
 }
 ```
 
+### Sync LocalStorage Example
+
+
 ### Why not exposing the same logic in a service?
 
 // Some ideas to elaborate on...
@@ -180,13 +183,6 @@ export class UsersComponent {
 - Easier re-used, more flexible, nested to each other (enable us to compose complex logic using small, isolated units, similar to how we compose an entire application using components.)
 - Require more boilerplate
 - Require more in-depth knowledge of Angular features (Injectable/providers)
-
-
-### What about testing?
-
-1. Using Tetsbed
-2. Mocked providers as default values in parameters
-
 
 
 Notes:
