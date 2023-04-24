@@ -175,6 +175,59 @@ export class UsersComponent {
 
 ### Sync LocalStorage Example
 
+```ts
+export function useLocalStorage(key: string) {
+  // state encapsulated and managed by the composable
+  const value = signal('');
+
+  const onDestroy = () => {
+    localStorage.setItem(key, JSON.stringify(value()));
+    window.removeEventListener('storage', handler);
+  };
+
+  const serializedVal = localStorage.getItem(key);
+  if (serializedVal !== null) {
+    value.set(parseValue(serializedVal));
+  }
+
+  function handler(e: StorageEvent) {
+    if (e.key === key) {
+      const newValue = e.newValue ? parseValue(e.newValue) : null;
+      value.set(newValue);
+    }
+  }
+
+  window.addEventListener('storage', handler, true);
+
+  // lifecycle to teardown side effects.
+  inject(DestroyRef).onDestroy(onDestroy);
+  window.onbeforeunload = onDestroy;
+
+  // expose managed state as return value
+  return { value };
+}
+```
+
+Which can be used in the component like this:
+
+```ts
+@Component({
+  standalone: true,
+  template: `
+    <button (click)="useTheme('Dark')">Use dark theme</button>
+    <button (click)="useTheme('Light')">Use light theme</button>
+
+    <p>Stored used: {{ storage.value() }}</p>
+  `,
+})
+export class LocalStorageComponent {
+  storage = useLocalStorage('theme');
+
+  useTheme(theme: 'Dark' | 'Light') {
+    this.storage.value.set(theme)
+  }
+}
+```
 
 ### Why not exposing the same logic in a service?
 
