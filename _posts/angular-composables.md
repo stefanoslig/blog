@@ -1,5 +1,5 @@
 ---
-title: 'Angular Composables'
+title: 'Angular Composables (a.k.a Functional Services)'
 excerpt: 'TBD'
 coverImage: '/assets/blog/angular-composables/angular-composables-4.jpg'
 date: '2023-05-01T05:35:07.322Z'
@@ -16,7 +16,9 @@ ogImage:
 
 In version 16.0.0-next.0 the Angular team introduced a very first implementation of `Signals` which is a reactive primitive which can offer fine-grained reactivity in Angular. With such big changes like a new reactive primitive, considering also other very useful features the Angular team has introduced in the latest versions like the [inject](https://angular.io/api/core/testing/inject) function or the concept of [DestroyRef](https://next.angular.io/api/core/DestroyRef), it's anavoidable that new patterns will emerge. 
 
-This article is an attempt to explore and give a name to something that maybe some of you have already thought. A new concept that can emerge out of the introduction of `Signals`. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time.
+This article is an attempt to explore and give a name to something that maybe some of you have already thought. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time. 
+
+Also, in Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0] (https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16)
 
 ### What is a "Composable"?
 
@@ -24,9 +26,9 @@ A "composable" in the context of an Angular application is a function which enca
 
 In the same way, we create util functions in order to reuse stateless logic across our components, we create  composables to share stateful logic. You can check some if the use cases [here](https://vueuse.org/functions.html).   
 
-But let's see how a composable would look like in an Angular application (in the following examples I don't use the API which is proposed in the RFC for Angular Signals). When this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write very useful composables for every Angular app.
+But let's see how a composable would look like in an Angular application (in the following examples I don't use the API which is proposed in the RFC for Angular Signals). When this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write these composables in a much nicer way and we will be able to provide more capabilities.
 
-But let's start with a very simple exaple.
+Let's start with a very simple exaple.
 
 ### Mouse Tracker Example
 
@@ -180,11 +182,6 @@ export function useLocalStorage(key: string) {
   // state encapsulated and managed by the composable
   const value = signal('');
 
-  const onDestroy = () => {
-    localStorage.setItem(key, JSON.stringify(value()));
-    window.removeEventListener('storage', handler);
-  };
-
   const serializedVal = localStorage.getItem(key);
   if (serializedVal !== null) {
     value.set(parseValue(serializedVal));
@@ -199,9 +196,14 @@ export function useLocalStorage(key: string) {
 
   window.addEventListener('storage', handler, true);
 
+  effect(() => {
+    localStorage.setItem(key, JSON.stringify(value()));
+  });
+
   // lifecycle to teardown side effects.
-  inject(DestroyRef).onDestroy(onDestroy);
-  window.onbeforeunload = onDestroy;
+  inject(DestroyRef).onDestroy(() =>
+    window.removeEventListener('storage', handler)
+  );
 
   // expose managed state as return value
   return { value };
