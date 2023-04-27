@@ -18,7 +18,7 @@ In version 16.0.0-next.0 the Angular team introduced a very first implementation
 
 This article is an attempt to explore and give a name to something that maybe some of you have already thought. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time. 
 
-Also, in Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0] (https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16)
+In Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0] (https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16). But what is an Angular composable, why we would use it in project and how we would use it? 
 
 ### What is a "Composable"?
 
@@ -115,7 +115,7 @@ It is a convention to name composable functions with camelCase names that start 
 
 #### Return Values
 
-From this function we return the state we want to be exposed in the component. The state consists of one or more Signals which can be used in the template of our component or other computed properties or effects. In our example we initialized the `mouse` field with the `useMouse` composable which returns two signals.
+From this function we return the state we want to be exposed in the component. The state consists of one or more `Signals` which can be used in the template of our component or other computed properties or effects. In our example we initialized the `mouse` field with the `useMouse` composable which returns two signals.
 
 #### Usage Restrictions
 
@@ -123,59 +123,9 @@ From this function we return the state we want to be exposed in the component. T
 
 Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example , unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
 
-### Async State Example
-
-The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch automatically the data, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable as you can see in the following snippet.
-
-```ts
-export function useFetch<D>(url: Signal<string>) {
-  const data = signal<D | null>(null);
-  const error = signal<Error | null>(null);
-
-  async function doFetch() {
-    const urlValue = url();
-
-    try {
-      // artificial delay / random error
-      await timeout();
-
-      const res = await fetch(urlValue);
-      data.set(await res.json());
-      error.set(null);
-    } catch (e) {
-      data.set(null);
-      error.set(e as Error);
-    }
-  }
-
-  effect(doFetch);
-
-  return { data, error, retry: doFetch };
-}
-```
-
-Which can be used in the component like this:
-
-```ts
-@Component({
-  standalone: true,
-  template: `
-    ...
-      <p>Oops! Error encountered: {{ fetch.error()?.message }}</p>
-      <button (click)="fetch.retry()">Retry</button>
-    ...
-  `,
-  imports: [NgFor, JsonPipe, NgIf],
-})
-export class UsersComponent {
-  ...
-  url = computed(() => baseUrl + this.id());
-
-  fetch = useFetch(this.url);
-}
-```
-
 ### Sync LocalStorage Example
+
+Another use case for the Angular composables is when we want to automatically sync a `Signal` with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a `Signal` with the current value we have in the local storage and if there is a change in the component(for example the user selected another theme) an effect, will observe this change and will set the new value in the local storage automatically. 
 
 ```ts
 export function useLocalStorage(key: string) {
@@ -231,25 +181,64 @@ export class LocalStorageComponent {
 }
 ```
 
-### Why not exposing the same logic in a service?
+### Async State Example
 
-// Some ideas to elaborate on...
-- Tent to become complex files including the logic for too many different things. 
-- Easier re-used, more flexible, nested to each other (enable us to compose complex logic using small, isolated units, similar to how we compose an entire application using components.)
-- Require more boilerplate
-- Require more in-depth knowledge of Angular features (Injectable/providers)
+The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch automatically the data, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable as you can see in the following snippet.
+
+```ts
+export function useFetch<D>(url: Signal<string>) {
+  const data = signal<D | null>(null);
+  const error = signal<Error | null>(null);
+
+  async function doFetch() {
+    const urlValue = url();
+
+    try {
+      // artificial delay / random error
+      await timeout();
+
+      const res = await fetch(urlValue);
+      data.set(await res.json());
+      error.set(null);
+    } catch (e) {
+      data.set(null);
+      error.set(e as Error);
+    }
+  }
+
+  effect(doFetch);
+
+  return { data, error, retry: doFetch };
+}
+```
+
+Which can be used in the component like this:
+
+```ts
+@Component({
+  standalone: true,
+  template: `
+    ...
+      <p>Oops! Error encountered: {{ fetch.error()?.message }}</p>
+      <button (click)="fetch.retry()">Retry</button>
+    ...
+  `,
+  imports: [NgFor, JsonPipe, NgIf],
+})
+export class UsersComponent {
+  ...
+  url = computed(() => baseUrl + this.id());
+
+  fetch = useFetch(this.url);
+}
+```
+
+### Why just not using a service?
+
+One thing I want to stress out is that Angular composables is not a replacement of Angular services. We don't want to lose the super powers the Angular DI system offers us. However, what I want to be the outcome of this article is that using a service is not always the best way or the only way at least to extract stateful logic from your components. 
+
+Angular composables should contain the stateful logic for a very specific thing. Sometimes we see that Angular services tent to become complex files including the logic for many different things. If we want to isolate a specific logic in a component which can be used from other components, then maybe we should consider adding a composable. They can be a nice tool for the local state management of our components. They are very flexible, can be nested to each other and can be treated as isolated units that enable us to compose more complex logic.
+
+Angular composables require less boilerplate than services and of course less knowledge of Angular features (Injectable/providers).
 
 
-Notes:
-
-/**
-//https://github.com/angular/angular/blob/2703fd626040c5e65401ebd776404a3b9e284724/packages/core/src/signals/README.md
-
-ReactiveNodes keep track of dependency ReactiveEdges to each other. Producers are aware of which consumers depend on their value, while consumers are aware of all of the producers on which they depend. These references are always bidirectional.
-
-A major design feature of Angular Signals is that dependency edges (ReactiveEdges) are tracked using weak references (WeakRef). At any point, it's possible that a consumer node may go out of scope and be garbage collected, even if it is still referenced by a producer node (or vice versa). This removes the need for explicit cleanup operations that would remove these dependency edges for signals going "out of scope". Lifecycle management of signals is greatly simplified as a result, and there is no chance of memory leaks due to the dependency tracking.
- */
-
- /** 
-Yes! You can create and read signals in components, services, regular functions, top-level JS module code - anywhere you might need a reactive primitive. We see this as a huge benefit of signals - reactivity is not exclusively contained within components. Signals empower you to model data flow without being constrained by the visual hierarchy of a page
-*/ 
