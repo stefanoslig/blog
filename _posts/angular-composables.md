@@ -18,7 +18,7 @@ In version 16.0.0-next.0 the Angular team introduced a first implementation of S
 
 This article is an attempt to explore and give a name to something that maybe some of you have already thought. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time. 
 
-In Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0] (https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16). But what is an Angular composable, why we would use it in project and how we would use it? 
+In Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16). But what is an Angular composable, why and how we would use it in a project? 
 
 ### What is an Angular Composable?
 
@@ -26,7 +26,7 @@ A "composable" in the context of an Angular application is a function which enca
 
 In the same way, we create util functions in order to reuse stateless logic across our components, we create  composables to share stateful logic. You can check some of potential use cases for an Angular project [here](https://vueuse.org/functions.html).   
 
-But let's see how a composable would look like in an Angular application. In the following examples I don't use the API which is proposed in the RFC for Angular Signals. When this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write these composables in a much nicer way and we will be able to provide more capabilities.
+But let's see how a composable would look like in an Angular application. In the following examples I don't use the API which is proposed in the RFC for Angular Signals. When all the features of this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write these composables in a much nicer way and we will be able to provide more capabilities.
 
 Let's start with a very simple exaple.
 
@@ -122,13 +122,13 @@ From this function we return the state we want to be exposed in the component. T
 
 #### Usage Restrictions
 
-*** Because this function injects the `DOCUMENT` token using the `inject` function can only be used in construction context (i.e. in the of constructor, fields initialization) but not in the component's lifecycle hooks for example ***
+*Because this function injects the `DOCUMENT` token using the `inject` function can only be used in construction context (i.e. in the of constructor, fields initialization) but not in the component's lifecycle hooks for example*
 
 Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example , unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
 
 ### Sync LocalStorage Example
 
-Another use case for the Angular composables is when we want to automatically sync a signa with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a signal with the current value we have in the local storage. If there is a change in the component, for example the user selected another theme, an effect will observe this change and will set the new value in the local storage automatically. 
+Another use case for the Angular composables is when we want to automatically sync a signal with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a signal with the current value we have in the local storage. If there is a change in the component, for example the user selected another theme, an `effect` will observe this change and will set the new value in the local storage automatically. 
 
 ```ts
 export function useLocalStorage(key: string) {
