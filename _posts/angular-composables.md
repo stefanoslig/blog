@@ -106,6 +106,9 @@ export class MouseTrackerComponent {
 }
 ```
 
+[Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr?file=src/app/composables/mouse-tracker.ts)
+
+
 What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. Here are some conventions and best practices we follow:
 
 #### Naming
@@ -181,6 +184,8 @@ export class LocalStorageComponent {
 }
 ```
 
+[Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr?file=src/app/composables/storage.ts)
+
 ### Async State Example
 
 The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch automatically the data, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable as you can see in the following snippet.
@@ -233,6 +238,8 @@ export class UsersComponent {
 }
 ```
 
+[Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr?file=src/app/composables/fetch.ts)
+
 ### Why just not using a service?
 
 One thing I want to stress out is that Angular composables is not a replacement of Angular services. We don't want to lose the super powers the Angular DI system offers us. However, what I want to be the outcome of this article is that using a service is not always the best way or the only way at least to extract stateful logic from your components. 
@@ -241,4 +248,6 @@ Angular composables should contain the stateful logic for a very specific thing.
 
 Angular composables require less boilerplate than services and of course less knowledge of Angular features (Injectable/providers).
 
+The examples can be found on [Github](https://github.com/stefanoslig/angular-composables-demo) and on [Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr)
 
+Thank you for reading ♡
