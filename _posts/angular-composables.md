@@ -1,6 +1,6 @@
 ---
 title: 'Angular Composables'
-excerpt: 'In this article we explore a pattern coming from Vue.js and how it can be applied in Angular. We investigate how we can create these small units of stateful logic that can be re-used from different components.'
+excerpt: 'In this article we explore a pattern that arises in Vue.js and how it can be applied in Angular. We investigate how we can create these small units of stateful logic that can be re-used by different components.'
 coverImage: '/assets/blog/angular-composables/angular-composables-4.jpg'
 date: '2023-05-01T05:35:07.322Z'
 author:
@@ -14,21 +14,19 @@ ogImage:
 
 *Composables is not a new idea. It's a concept coming from `Vue.js`. A lot of the examples and ideas I use in this blog come directly from [Vue.js Composables](https://vuejs.org/guide/reusability/composables.html) docs.*
 
-In version 16.0.0-next.0 the Angular team introduced a first implementation of Signals which is a reactive primitive which can offer fine-grained reactivity in Angular. With such big changes like a new reactive primitive, considering also other very useful features the Angular team has introduced in the latest versions like the [inject](https://angular.io/api/core/testing/inject) function or the concept of [DestroyRef](https://next.angular.io/api/core/DestroyRef), it's anavoidable that new patterns will emerge. 
+In version 16.0.0-next.0 the Angular team introduced a first implementation of Signals which is a reactive primitive which can offer fine-grained reactivity in Angular. With such big changes, also considering other very useful features the Angular team has introduced in the latest versions like the [inject](https://angular.io/api/core/testing/inject) function or the concept of [DestroyRef](https://next.angular.io/api/core/DestroyRef), it's inevitable that new patterns will emerge. This article is an attempt to explore this pattern in the context of Angular this time. 
 
-This article is an attempt to explore and give a name to something that maybe some of you have already thought. As I mentioned already, this is not a new concept. It's already used and tested in other framewroks like `Vue.js`. Let's explore it in the next paragraphs, in the context of Angular this time. 
-
-In Angular itself we already see a transition on what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16). But what is an Angular composable, why and how we would use it in a project? 
+In Angular itself we already see a transition of what we can call `Functional Services`. It started with the introduction of functional guards and resolvers in version [14.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1420-2022-08-25) and was continued with the introduction of functional interceptors in version [15.0.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1500-2022-11-16). But what is an Angular Composable, why and how would we use it in a project? 
 
 ### What is an Angular Composable?
 
-A "composable" in the context of an Angular application is a function which encapsulates stateful logic using the Signals API. The composables can be re-used in multiple components, can be nested within each other and they can help us to organize the stateful logic of our components into small, flexible and simpler units.
+A "composable" in the context of an Angular application is a function which encapsulates stateful logic using the Signals API. The composables can be re-used in multiple components, can be nested within each other and can help us to organize the stateful logic of our components into small, flexible and simpler units.
 
-In the same way, we create util functions in order to reuse stateless logic across our components, we create  composables to share stateful logic. You can check some of potential use cases for an Angular project [here](https://vueuse.org/functions.html).   
+In the same way, we create util functions in order to reuse stateless logic across our components, we create  composables to share stateful logic. You can check some of the potential use cases for an Angular project [here](https://vueuse.org/functions.html).   
 
-But let's see how a composable would look like in an Angular application. In the following examples I don't use the API which is proposed in the RFC for Angular Signals. When all the features of this API is in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write these composables in a much nicer way and we will be able to provide more capabilities.
+But let's see how a composable would look in an Angular application. In the following examples I don't use the API which is proposed in the RFC for Angular Signals. When all the features of this API are in place (e.g [Application rendering lifecycle hooks, Signal-based queries](https://github.com/angular/angular/discussions/49682)) we will be able to write these composables in a much nicer way and we will be able to provide to them more capabilities.
 
-Let's start with a very simple exaple.
+Let's start with a very simple example.
 
 ### Mouse Tracker Example
 
@@ -94,7 +92,7 @@ export function useMouse() {
 }
 ``` 
 
-And now it can be use in all the different components like this:
+And now it can be used in all the different components like this:
 
 ```ts
 @Component({
@@ -109,7 +107,7 @@ export class MouseTrackerComponent {
 [Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr?file=src/app/composables/mouse-tracker.ts)
 
 
-What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. Here are some conventions and best practices we follow:
+What we simply did was to extract the logic we had in the component (and we want to reuse in other components) into an external function. Here are some conventions and best practices we followed in the above example:
 
 #### Naming
 
@@ -124,11 +122,11 @@ From this function we return the state we want to be exposed in the component. T
 
 *Because this function injects the `DOCUMENT` token using the `inject` function can only be used in construction context (i.e. in the of constructor, fields initialization) but not in the component's lifecycle hooks for example*
 
-Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example , unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
+Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example, unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
 
 ### Sync LocalStorage Example
 
-Another use case for the Angular composables is when we want to automatically sync a signal with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a signal with the current value we have in the local storage. If there is a change in the component, for example the user selected another theme, an `effect` will observe this change and will set the new value in the local storage automatically. 
+Another use case for the Angular Composables is when we want to automatically sync a signal with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a signal with the current value we have in the local storage. If there is a change in the component, for example the user selected another theme, an `effect` will observe this change and will set the new value in the local storage automatically. 
 
 ```ts
 export function useLocalStorage(key: string) {
@@ -163,7 +161,7 @@ export function useLocalStorage(key: string) {
 }
 ```
 
-Which can be used in the component like this:
+This composable can be used in the component like this:
 
 ```ts
 @Component({
@@ -188,7 +186,7 @@ export class LocalStorageComponent {
 
 ### Async State Example
 
-The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch automatically the data, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable as you can see in the following snippet.
+The next example is a data fetching composable. When we do an HTTP request, we need to describe different states of this request in our components (e.g Loading, Error, Success). We might also want to re-fetch the data automatically, when one parameter in the url changes. We don't want to replicate the logic for the different states or the logic for the re-fetch on every component. We can extract this logic to a composable, as you can see in the following snippet.
 
 ```ts
 export function useFetch<D>(url: Signal<string>) {
@@ -242,9 +240,9 @@ export class UsersComponent {
 
 ### Why just not using a service?
 
-One thing I want to stress out is that Angular composables is not a replacement of Angular services. We don't want to lose the super powers the Angular DI system offers us. However, what I want to be the outcome of this article is that using a service is not always the best way or the only way at least to extract stateful logic from your components. 
+One thing I want to stress is that Angular Composables is not a replacement of Angular services. We don't want to lose the superpowers the Angular DI system offers us. However, what I want the outcome of this article to be, is that using a service is not always the best way or the only way to extract stateful logic from your components. 
 
-Angular composables should contain the stateful logic for a very specific thing. Sometimes we see that Angular services tent to become complex files including the logic for many different things. If we want to isolate a specific logic in a component which can be used from other components, then maybe we should consider adding a composable. They can be a nice tool for the local state management of our components. They are very flexible, can be nested to each other and can be treated as isolated units that enable us to compose more complex logic.
+Angular Composables should contain the stateful logic for a very specific thing. Sometimes we see that Angular services tend to become complex files including the logic for many different things. If we want to isolate a specific logic in a component which can be used from other components, then maybe we should consider adding a composable. They can be a nice tool for the local state management of our components. They are very flexible, can be nested into each other and can be treated as isolated units that enable us to compose more complex logic.
 
 Angular composables require less boilerplate than services and of course less knowledge of Angular features (Injectable/providers).
 
