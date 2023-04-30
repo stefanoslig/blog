@@ -10,7 +10,7 @@ ogImage:
   url: '/assets/blog/angular-composables/angular-composables-4.jpg'
 ---
 
-### Introduction
+We all know Lodash, a library for reusing stateless logic in our projects. What if we had a similar toolkit for reusing stateful logic in an Angular project?
 
 *Composables is not a new idea. It's a concept coming from `Vue.js`. A lot of the examples and ideas I use in this blog come directly from [Vue.js Composables](https://vuejs.org/guide/reusability/composables.html) docs.*
 
@@ -238,7 +238,7 @@ export class UsersComponent {
 
 [Stackblitz](https://stackblitz.com/edit/angular-2kiv4w-s3krxr?file=src/app/composables/fetch.ts)
 
-### Why just not using a service?
+### Why not just use a service?
 
 One thing I want to stress is that Angular Composables is not a replacement of Angular services. We don't want to lose the superpowers the Angular DI system offers us. However, what I want the outcome of this article to be, is that using a service is not always the best way or the only way to extract stateful logic from your components. 
 
