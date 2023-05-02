@@ -124,6 +124,36 @@ From this function we return the state we want to be exposed in the component. T
 
 Angular v16 has introduced a new provider called DestroyRef. DestroyRef lets you set callbacks to run for any cleanup or destruction behavior. The scope of this destruction depends on where DestroyRef is injected. This new feature fits perfectly with the Angular composables and gives us the power to perform clean up tasks (e.g removing the event listener like in our example, unsubscribe from subscriptions) in our components, when the Component or Directive that uses it is destroyed. 
 
+The same example can also be written using RxJS and the newly added `takeUntilDestroyed` operator under the `@angular/core/rxjs-interop` package:
+
+```ts
+export function useMouse() {
+  // injectables
+  const document = inject(DOCUMENT);
+  const destroyRef = inject(DestroyRef);
+
+  // state encapsulated and managed by the composable
+  const x = signal(0);
+  const y = signal(0);
+
+  // a composable can update its managed state over time.
+  function update(event: any) {
+    x.update(() => event.pageX);
+    y.update(() => event.pageY);
+  }
+
+  fromEvent(document, 'mousemove')
+    .pipe(takeUntilDestroyed(destroyRef))
+    .subscribe(update);
+
+  // expose managed state as return value
+  return { x, y };
+}
+```
+
+The `takeUntilDestroyed` operator completes the Observable when the component that uses the composable is destroyed.
+
+
 ### Sync LocalStorage Example
 
 Another use case for the Angular Composables is when we want to automatically sync a signal with the local storage. For example we might want to save a user's theme preference to the local storage. To do this, we initialize a signal with the current value we have in the local storage. If there is a change in the component, for example the user selected another theme, an `effect` will observe this change and will set the new value in the local storage automatically. 
