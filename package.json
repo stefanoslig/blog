@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "16"
+  },
   "name": "blog",
   "private": true,
   "scripts": {
