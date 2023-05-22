@@ -10,7 +10,7 @@ ogImage:
   url: '/assets/blog/class-guards-to-functional/class-guards-to-functional.png'
 ---
 
-In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22) the Class and InjectionToken guards and resolvers marked as deprecated. If you migrate to v16.0.0 you will notice that the `CanActivate, CanActivateChild, CanDeactivate, CanLoad, CanMatch, Resolve` interfaces will be removed automatically from your guards and resolvers as you can see in the following snippet.
+In version [15.2.0](https://github.com/angular/angular/blob/main/CHANGELOG.md#1520-2023-02-22) the Class and InjectionToken guards and resolvers marked as deprecated. If you migrate to v16.0.0 you will notice that the `CanActivate, CanActivateChild, CanDeactivate, CanLoad, CanMatch, Resolve` interfaces will be removed automatically from your guards and resolvers as you can see in the following snippet. Classes can still be used as the underlying implementation of functional guards and resolvers but there will not be an interface requiring a specific structure for those classes.
 
 ```diff
 -import { ActivatedRouteSnapshot, Resolve } from "@angular/router";
@@ -40,11 +40,30 @@ In my opinion both sides have some valid arguments. For example I also believe t
 
 ### Do I need to migrate to the functional approach?
 
-Despite the fact that the Angular team shows a preference to the functional guards and resolvers, you can definitely use for the short and the long term class-based  
+Despite the fact that the Angular team shows a preference to the functional guards and resolvers, you can definitely use for the short and the long term class-based guards and resolvers if you prefer them. To do this, the Angular team has implemented some helper functions (`mapToCanActivate, mapToCanActivateChild, mapToCanDeactivate, mapToCanMatch, mapToResolve`, ). As it is mentioned in the PR:
 
-example with using the helper functions 
+> These functions will serve to aid in migrating off of the now deprecated class-based guards, but also provide an easy avenue to still defining guards as Injectable classes if that is desired.
 
-The Router types only support functional guards definitions. Classes can still be used as the underlying implementation of functional guards and resolvers but there will not be an interface requiring a specific structure for those classes.
+They can be used in the following way:
+
+```ts
+export const APP_ROUTES: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'heroes', component: HeroesComponent },
+  {
+    path: 'detail/:id',
+    component: HeroDetailComponent,
+    resolve: { heroResolver: mapToResolve(HeroResolver) },
+    canActivate: mapToCanActivate([HeroGuard])
+  },
+];
+```
+
+Using these hepler functions, you can migrate gradually your class based guards to functional or you can keep using the class-based guards. There is already a Draft PR for a migration which will update the Route definitions to use functions instead of class references in the guard and resolver properties by using the helper functions.
+
+
+Thank you for reading ♡
 
 
 
