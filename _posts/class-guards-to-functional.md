@@ -2,7 +2,7 @@
 title: 'Transitioning from Class-Based Guards and Resolvers to functional in Angular'
 excerpt: 'Angular version 15.2.0 deprecates Class and InjectionToken guards and resolvers, favoring a functional approach. The upcoming v16.0.0 release automatically removes specific interfaces, sparking discussions within the community'
 coverImage: '/assets/blog/class-guards-to-functional/class-guards-to-functional.png'
-date: '2023-05-21T05:35:07.322Z'
+date: '2023-05-22T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo.jpeg'
@@ -46,7 +46,7 @@ In my opinion both sides have some valid arguments. For example I also believe t
 
 ### Do I need to migrate to the functional approach?
 
-Despite the fact that the Angular team shows a preference to the functional guards and resolvers, you can definitely use for the short and the long term class-based guards and resolvers if you prefer them. To do this, the Angular team has implemented some helper functions (`mapToCanActivate, mapToCanActivateChild, mapToCanDeactivate, mapToCanMatch, mapToResolve`, ). As it is mentioned in the PR:
+Despite the fact that the Angular team shows a preference to the functional guards and resolvers, you can definitely use for the short and the long term class-based guards and resolvers if you prefer them. To do this, the Angular team has implemented some helper functions (`mapToCanActivate, mapToCanActivateChild, mapToCanDeactivate, mapToCanMatch, mapToResolve` ). As it is mentioned in the PR:
 
 > These functions will serve to aid in migrating off of the now deprecated class-based guards, but also provide an easy avenue to still defining guards as Injectable classes if that is desired.
 
