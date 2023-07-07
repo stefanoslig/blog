@@ -5,7 +5,7 @@ coverImage: '/assets/blog/testing-functional-guards-and-resolvers/testing-functi
 date: '2023-03-21T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/testing-functional-guards-and-resolvers/testing-functional-resolvers.png'
 ---

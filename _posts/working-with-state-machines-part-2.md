@@ -5,7 +5,7 @@ coverImage: '/assets/blog/working-with-state-machines-part-2/different-worlds.jp
 date: '2022-04-01T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/working-with-state-machines-part-2/different-worlds.jpg'
 ---

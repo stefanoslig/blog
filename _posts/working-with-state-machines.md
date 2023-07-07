@@ -5,7 +5,7 @@ coverImage: '/assets/blog/working-with-state-machines/working-with-state-machine
 date: '2022-02-01T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/working-with-state-machines/working-with-state-machines-main-photo.jpeg'
 ---

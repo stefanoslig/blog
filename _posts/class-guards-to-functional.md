@@ -5,7 +5,7 @@ coverImage: '/assets/blog/class-guards-to-functional/class-guards-to-functional.
 date: '2023-05-22T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/class-guards-to-functional/class-guards-to-functional.png'
 ---

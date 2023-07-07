@@ -5,7 +5,7 @@ coverImage: '/assets/blog/synchronizing-app-state-across-iframes/main-photo.jpeg
 date: '2022-09-18T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/synchronizing-app-state-across-iframes/main-photo.jpeg'
 ---

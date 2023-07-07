@@ -17,7 +17,7 @@ function HomePage() {
               </h2>
             </div>
             <Image
-              src="/assets/my-photo.jpeg"
+              src="/assets/my-photo-2.jpg"
               alt="my photo"
               className="rounded-full"
               width={250}

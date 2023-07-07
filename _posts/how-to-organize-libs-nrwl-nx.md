@@ -5,7 +5,7 @@ coverImage: '/assets/blog/organize-your-libs-in-nx-monorepo/building-blocks.jpeg
 date: '2022-04-22T05:35:07.322Z'
 author:
   name: Stefanos Lignos
-  picture: '/assets/my-photo.jpeg'
+  picture: '/assets/my-photo-2.jpg'
 ogImage:
   url: '/assets/blog/organize-your-libs-in-nx-monorepo/building-blocks.jpeg'
 ---
