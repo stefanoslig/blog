@@ -49,7 +49,7 @@ const LongStoryShort: FunctionComponent = () => {
         <p className="text-lg text-slate-600">
           Hi! I&apos;m Stefanos. I&apos;m the father of a sweet boy called Leo
           and I&apos;m currently working as a Senior Frontend Developer at
-          Zivver where we work to make our online communications more secure. I
+          Fedex where we work to deliver an innovative shipping solution to our global users. I
           love talking about frontend architecture, state machines, reactive
           programming and Angular.
         </p>

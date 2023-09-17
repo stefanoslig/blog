@@ -8,12 +8,12 @@ function HomePage() {
       <Container>
         <div className="flex flex-col mx-auto max-w-md">
           <div className="flex pt-4 items-center">
-            <div className="pr-10">
+            <div className="pr-4">
               <h1 className="text-2xl text-slate-700 font-bold">
                 Stefanos Lignos
               </h1>
               <h2 className="text-xl text-slate-600">
-                Software Engineer in Amsterdam
+                Freelance Senior Front-end Engineer in Amsterdam
               </h2>
             </div>
             <Image
