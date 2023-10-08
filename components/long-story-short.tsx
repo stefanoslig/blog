@@ -67,7 +67,7 @@ const LongStoryShort: FunctionComponent = () => {
             Still here? Well, not a lot more I can share, I&apos;m the father of
             a very sweet little boy with whom I have the best pair programming
             sessions so far (he doesn&apos;t talk yet!). I studied computer
-            engineering and I have 7 years of professional experience.
+            engineering and I have 9 years of professional experience.
           </p>
           <br />
           <p className="text-lg text-slate-600">
