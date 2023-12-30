@@ -82,13 +82,60 @@ Let's explore what happens internally when we call the `signalStore` function. T
 
 ![ngrx signals store injectable](/assets/blog/ngrx-signals-structure/signal-store-injectable.png)
 
-In the constructor of the created class, the store features we have provided will be start executed one by one in the order we have provided them. The order of the features depends on the functionality you want to be provided from the previous feature to the next one.
+In the constructor of the created class, the store features we have provided will be start executed one by one in the order we have provided them. The order of the features depends on the functionality you want to be provided from the previous feature to the next one. For example, if you want to use a method you have declared in the `withMethods` feature in the `withHooks` method, you need to add `withMethods` first in the order. 
 
-![ngrx signals store features execution](/assets/blog/ngrx-signals-structure/features-execution.png)
+![ngrx signals store features execution](/assets/blog/ngrx-signals-structure/features-execution-2.png)
 
-There are 4 core features provided to us from NgRx. Let's explore what each one of them does:
+There are 4 core features provided to us from NgRx. Let's explore what each one of them does: 
 
-#### withState
+#### 
+We use the `withState` feature to define the shape and the value of our state in the store. For example we could define the value of a `UserStore` like this:
+
+```ts
+export const UserStore = signalStore(
+  { providedIn: 'root' },
+  withState({
+    user: {
+      firstName: 'John',
+      lastName: 'Doe',
+      age: 25,
+      address: {
+        id: 1,
+        country: 'UK',
+      },
+    },
+    settings: {
+      allowAutoSync: false,
+    },
+  })
+);
+```
+
+The `withState` function will create a deep signal for us. That means that we can access in our components and we can use generally in our code any property of the state as we would do for any other signal. For example for the above store, we can dispay the country of the user like this:
+
+```ts
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { UserStore } from './user.store';
+
+@Component({
+  selector: 'app-user',
+  standalone: true,
+  template: `
+    <h1>Country: {{ userStore.user.address.country() }}!</h1>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export default class UserComponent {
+  readonly userStore = inject(UserStore);
+}
+```
+
+Because internally the `withState` feature function uses a `Proxy` to create the deep signal, the signal for every property (which in reality is a `computed`) will be created lazily, only when we try to access the propery. This improves the overall performance in cases where you only need to observe a small subset of the object's(state) properties. Also if the nested signal has already beem accessed(created), won't be created again.
+
+As we saw earlier the features are called based on the order we have placed them when we call the `signalStore` function. Each one of them is a factory function which returns a function which internally will be called with the store as an argument as it is defined until the point of its execution. That mean that if the store contains already a method or a state slice or a computed entry with the same key as the keys of the state we define with the `withState` feature, the latter will override previously defined state slices, computed, and methods with the same name as you can see in the following diagram.
+
+
+![ngrx signals store features execution](/assets/blog/ngrx-signals-structure/with-state-remove-same-keys.png)
 
 #### withMethods
 
@@ -96,15 +143,7 @@ There are 4 core features provided to us from NgRx. Let's explore what each one 
 
 #### withHooks
 
-
-#### Lazy deep signals
-
-### Composing stores
-If two or more stores use each other, they cannot create an infinite loop through getters or actions. They cannot both directly read each other state in their setup function: https://pinia.vuejs.org/cookbook/composing-stores.html
-
-
 ### Testing
-
 
 
 > **_Bibliography_**
