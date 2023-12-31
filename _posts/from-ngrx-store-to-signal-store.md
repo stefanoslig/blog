@@ -2,7 +2,7 @@
 title: 'All you need to know about the NgRx Signals Store'
 excerpt: 'In this article we explore how we can migrate a codebase using NgRx Store to the NgRx SignalStore'
 coverImage: '/assets/blog/ngrx-signals-store/ngrx-signals-store.png'
-date: '2024-01-01T05:35:07.322Z'
+date: '2024-01-08T05:35:07.322Z'
 author:
   name: Stefanos Lignos
   picture: '/assets/my-photo-2.jpg'
@@ -188,16 +188,38 @@ export const ArticleStore = signalStore(
 
 #### patchState
 
-The patchState utility function provides a type-safe way to perform immutable updates on pieces of state. Due to a recent change to the default equality check function in signals in Angular 17.0.0-next.8 release, it is important to make sure that we update the values of the nested signals of our state in an immutable way. That's because in the new default equality checj of hte Angular signals, objects are checked by reference. So if you return the same object, just mutated, your signal will not send a notification that is updated. The `patchState` function helps us with this.
+The patchState utility function provides a type-safe way to perform immutable updates on pieces of state. Due to a recent change to the default equality check function in signals in Angular 17.0.0-next.8 release, it is important to make sure that we update the values of the nested signals of our state in an immutable way. That's because in the new default equality check of the Angular signals, objects are checked by reference. So if you return the same object, just mutated, your signal will not send a notification that is updated. The `patchState` function helps us with this.
 
 #### withComputed
+
+Using the `withComputed` feature we can specify in our store derived state, thus state which is calculated based on one or more slices of our state. In the same manner as with the `withState` and the `withMethods` features, it will override previously defined state slices and methods with the same name.
+
+Examples of `withComputed` usage:
+
+```ts
+export const HelloStore = signalStore(
+  { providedIn: 'root' },
+  withCallState(),
+  withState({ firstName: 'John', lastName: 'Doe' }),
+  withComputed(({ firstName }, articlesService = inject(AddressStore)) => ({
+    name: computed(() => firstName().toUpperCase()),
+    nameAndAddress: computed(
+      () => `${firstName().toUpperCase()} ${articlesService.address()}`
+    ),
+  })),
+  ...
+  ...
+```
 
 #### withHooks
 
 ### Customs features
 
+### RxMethod
+
 ### Conclusion
 
+part 2: WithEntities feature/Testing
 
 > **_Bibliography_**
 > 
