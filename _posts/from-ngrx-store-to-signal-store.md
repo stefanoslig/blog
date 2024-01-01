@@ -199,7 +199,6 @@ Examples of `withComputed` usage:
 ```ts
 export const HelloStore = signalStore(
   { providedIn: 'root' },
-  withCallState(),
   withState({ firstName: 'John', lastName: 'Doe' }),
   withComputed(({ firstName }, articlesService = inject(AddressStore)) => ({
     name: computed(() => firstName().toUpperCase()),
@@ -213,11 +212,44 @@ export const HelloStore = signalStore(
 
 #### withHooks
 
+In case we want to perform specific actions when the store is created or destroyed like calling one of the methods we have defined previously in the `withMethods` feature or performing some clean-up logic, we can use the `withHooks` feature. The lifecycle methods also have access to the injection context for automatic cleanup using the takeUntilDestroyed() function from Angular.
+
+Example of `withHooks` usage:
+
+```ts
+export const HelloStore = signalStore(
+  withState({ firstName: 'John', lastName: 'Doe' }),
+  withComputed(({ firstName }, articlesService = inject(AddressStore)) => ({
+    name: computed(() => firstName().toUpperCase()),
+    nameAndAddress: computed(
+      () => `${firstName().toUpperCase()} ${articlesService.address()}`
+    ),
+  })),
+  withMethods((store) => ({
+    changeFirstName(firstName: string) {
+      patchState(store, { firstName });
+    },
+  })),
+  withHooks({
+    onInit({ changeFirstName }) {
+      changeFirstName('Nick');
+    },
+    onDestroy({ firstName }) {
+      console.log('firstName on destroy', firstName());
+    },
+  })
+);
+```
+
 ### Customs features
 
 ### RxMethod
+will throw an error when used out of the injection context.
 
 ### Conclusion
+
+If you already use NgRx in a project, I would suggest to start working with the NgRx Signals Store for new state. You can easily combine the NgRx Store and the NgRx Signals Store ([example](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts#L121)). For a new project I would strongly suggest to start working directly with the NgRx Signals Store for the state management, since it can reduce dramatically the boilerplate and of course it has full support for working with Angular Signals in a structured way.
+
 
 part 2: WithEntities feature/Testing
 
