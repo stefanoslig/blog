@@ -243,7 +243,14 @@ export const HelloStore = signalStore(
 
 ### Customs features
 
-One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in an extremely easy way your own custom features and extend the librarie's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) repository which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
+One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in an extremely easy way your own custom features and extend the library's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) repository which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
+
+The NgRx Signals Store can be fully extended. Here is a list of things you can do:
+
+- Add new properties to stores
+- Add new methods to stores
+- Add new computed to stores
+- Specify which properties a store should contain in order to be possible to use them in a store.
 
 In the same way with the core features, a custom feature is
 
@@ -253,6 +260,8 @@ will throw an error when used out of the injection context.
 ### Conclusion
 
 If you already use NgRx in a project, I would suggest to start working with the NgRx Signals Store for new state. You can easily combine the NgRx Store and the NgRx Signals Store ([example](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts#L121)). For a new project I would strongly suggest to start working directly with the NgRx Signals Store for the state management, since it can reduce dramatically the boilerplate and of course it has full support for working with Angular Signals in a structured way.
+
+It is in developer preview
 
 
 part 2: WithEntities feature/Testing
