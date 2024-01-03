@@ -243,6 +243,10 @@ export const HelloStore = signalStore(
 
 ### Customs features
 
+One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in an extremely easy way your own custom features and extend the librarie's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) repository which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
+
+In the same way with the core features, a custom feature is
+
 ### RxMethod
 will throw an error when used out of the injection context.
 
