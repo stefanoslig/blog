@@ -1,5 +1,5 @@
 ---
-title: 'All you need to know about the NgRx Signals Store'
+title: 'All you need to know to start working with the NgRx Signals Store'
 excerpt: 'In this article we explore how we can migrate a codebase using NgRx Store to the NgRx SignalStore'
 coverImage: '/assets/blog/ngrx-signals-store/ngrx-signals-store.png'
 date: '2024-01-08T05:35:07.322Z'
@@ -64,7 +64,7 @@ Indeed, as we will see in the next sections, it's super easy to extend the funct
 
 #### signalStore
 
-Conceptually the `signalStore` function is similar to the RxJS `pipe` function. The `pipe` function takes pipeable operators as arguments, it will first perform the logic of the first pipeable operator and then use that value to perform the logic of the next pipeable operator, and so on. In this way, we define the behavior of a stream. In the same way, the `signalStore` function takes `store feature functions` (`SignalStoreFeature`) as an argument, it will first perform the logic of the first ` store feature function` and then use that value to perform the logic of the next feature function and so on. In this way, we define the intended behavior of our store.
+Conceptually the `signalStore` function is similar to the RxJS `pipe` function. The `pipe` function takes pipeable operators as arguments, it will first perform the logic of the first pipeable operator and then use that value to perform the logic of the next pipeable operator, and so on. In this way, we define the behavior of a stream. In the same way, the `signalStore` function takes `store feature functions` (`SignalStoreFeature`) as an argument, it will first perform the logic of the first `store feature function` and then use that value to perform the logic of the next feature function and so on. In this way, we define the intended behavior of our store.
 
 ```ts
 import { computed } from '@angular/core';
@@ -243,16 +243,65 @@ export const HelloStore = signalStore(
 
 ### Customs features
 
-One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in an extremely easy way your own custom features and extend the library's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) repository which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
+One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in a super easy way your own custom features and extend the library's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) library which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
 
-The NgRx Signals Store can be fully extended. Here is a list of things you can do:
+The NgRx Signals Store can be fully extended. Here is a list of things you can do with a custom feature:
 
 - Add new properties to stores
 - Add new methods to stores
 - Add new computed to stores
 - Specify which properties a store should contain in order to be possible to use them in a store.
+- Re-use the same functionality accross different stores
 
-In the same way with the core features, a custom feature is
+You can create a custom feature using the `signalStoreFeature` function. In the same way with the `signalStore` function, it receives one or more core or custom features as input argument(s). In the same way with the signal store function, it will first perform the logic of the first provided feature and then use that value to perform the logic of the next feature function and so on. One of the simplest examples of a custom feature is the following `withClipboard` feature. It enables us to copy text to clipboard and saves the copied text to the store.
+
+```ts
+...
+import { Clipboard } from '@angular/cdk/clipboard';
+
+export interface ClipboardState {
+  text: string;
+  copied: boolean;
+}
+
+export interface ClipboardOptions {
+  resetCopiedStateAfter?: number;
+}
+
+export function withClipboard(options?: ClipboardOptions) {
+  return signalStoreFeature(
+    withState<ClipboardState>({ text: '', copied: false }),
+    withMethods((store, clipboard = inject(Clipboard)) => ({
+      copy(value: string) {
+        clipboard.copy(value);
+
+        if (options?.resetCopiedStateAfter) {
+          setTimeout(
+            () => patchState(store, { copied: false }),
+            options?.resetCopiedStateAfter
+          );
+        }
+        patchState(store, { text: value, copied: true });
+      },
+    }))
+  );
+}
+```
+
+Now this custom feature can be used from any store in our application like this: 
+
+```ts
+export const HelloStore = signalStore(
+  { providedIn: 'root' },
+  withState({ firstName: 'John', lastName: 'Doe', phone: '616333843' }),
+  withComputed(({ firstName, lastName, phone }) => ({
+    nameAndPhone: computed(() => `${firstName} ${lastName} ${phone}`),
+  })),
+  withClipboard({ resetCopiedStateAfter: 1500 })
+);
+```
+
+[Stackblitz](https://stackblitz-starters-s3qcsd.stackblitz.io)
 
 ### RxMethod
 will throw an error when used out of the injection context.
