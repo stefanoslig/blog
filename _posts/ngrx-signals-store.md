@@ -134,7 +134,7 @@ Because internally the `withState` feature function uses a `Proxy` to create the
 
 As we saw earlier the features are called based on the order we have placed them when we call the `signalStore` function. Each one of them is a factory function which returns a function which internally will be called with the store as an argument as it is defined until the point of its execution. That mean that if the store contains already a method or a state slice or a computed entry with the same key as the keys of the state we define with the `withState` feature, the latter will override previously defined state slices, computed, and methods with the same name as you can see in the following diagram. Because unintentional overriding might lead to issues which are difficult to be detected, the NgRx team might improve soon the DX by showing a warning or an error when this happens (follow up on this open [issue](https://github.com/ngrx/platform/issues/4144)).
 
-![ngrx signals store features execution](/assets/blog/ngrx-signals-store/with-state-remove-same-keys-2.png)
+![ngrx signals store features execution](/assets/blog/ngrx-signals-store/with-state-remove-same-keys-3.png)
 
 #### withMethods
 
@@ -301,7 +301,64 @@ export const HelloStore = signalStore(
 );
 ```
 
-[Stackblitz](https://stackblitz-starters-s3qcsd.stackblitz.io)
+![gif example](/assets/blog/ngrx-signals-store/ezgif.com-video-to-gif-converter.gif)
+
+You can find the example here: [Stackblitz](https://stackblitz-starters-s3qcsd.stackblitz.io)
+
+Most likely you have already understood the problem with the above custom feature. If I want to save the ***copied*** status for more than one elements in the page in the same store, it's not possible with the current implementation of the feature. When you start working with the NgRx Signals Store and with the custom features, one of the first problems you will encounter is how you can use the same custom feature multiple times in the same store. The solution for this is very nicely explained in an [article from Manfred Steyer](https://www.angulararchitects.io/en/blog/ngrx-signal-store-deep-dive-flexible-and-type-safe-custom-extensions/). In the next paragraph I will show how we can re-implement the above custom feature so it can be used many times in the same store so we can save the status of different elements in the page. What we need to implement is  a custom feature with dynamic properties.
+
+What we should be able to do at the end is to prefix the slices of the custom feature's state with a dynamic property. In this way we avoid having naming collisions in the state slices. Here is how we would implement this custom feature:
+
+```ts
+export function withClipboard<Prop extends string>(
+  options: ClipboardOptions<Prop>
+): SignalStoreFeature {
+  const { textKey, copiedKey } = getClipboardStateKeys(options.prefix);
+  const { copyKey } = getClipboardMethodsKeys(options.prefix);
+
+  return signalStoreFeature(
+    withState({ [textKey]: '', [copiedKey]: false }),
+    withMethods((store, clipboard = inject(Clipboard)) => ({
+      [copyKey](value: string) {
+        clipboard.copy(value);
+
+        if (options?.resetCopiedStateAfter) {
+          setTimeout(
+            () => patchState(store, { [copiedKey]: false }),
+            options?.resetCopiedStateAfter
+          );
+        }
+        patchState(store, { [textKey]: value, [copiedKey]: true });
+      },
+    }))
+  );
+}
+```
+
+And this is how we can use it in the store:
+
+```ts
+export const HelloStore = signalStore(
+  { providedIn: 'root' },
+  withState({ firstName: 'John', lastName: 'Doe', phone: '616333843' }),
+  withComputed(({ firstName, lastName, phone }) => ({
+    nameAndPhone: computed(() => `${firstName} ${lastName} ${phone}`),
+  })),
+  withClipboard({ prefix: 'firstName', resetCopiedStateAfter: 1500 }),
+  withClipboard({ prefix: 'lastName', resetCopiedStateAfter: 1500 }),
+  withClipboard({ prefix: 'phone', resetCopiedStateAfter: 1500 })
+);
+```
+
+Now we can see that each element in the page has its own slice in the store.
+
+![gif example](/assets/blog/ngrx-signals-store/ezgif.com-video-to-gif-converter-2.gif)
+
+You can find the full implementation here: [Stackblitz](https://stackblitz-starters-2ea27n.stackblitz.io)
+
+
+
+
 
 ### RxMethod
 will throw an error when used out of the injection context.
@@ -312,8 +369,11 @@ If you already use NgRx in a project, I would suggest to start working with the 
 
 It is in developer preview
 
+Useful links - examples:
+[]()
+[]()
+[]()
 
-part 2: WithEntities feature/Testing
 
 > **_Bibliography_**
 > 
