@@ -12,11 +12,13 @@ ogImage:
 
 ## Introduction
 
-When the Angular team introduced the signals implementation, I started thinking about what a nice solution for the state management of signals would look like. I had the hope that the solution that would emerge would be just a very thin layer on top of Angular signals that would give the necessary tools to work with them in your project in a structured and scalable way avoiding too much boilerplate. Having worked with [Pinia](https://pinia.vuejs.org/) in the past, the official state management solution for Vue.js, I really liked its simplicity and modularity. Pinia has only a few core concepts and a very small API which makes it super easy to start working with. So, I was positively surprised when I saw the [NgRx SignalStore RFC](https://github.com/ngrx/platform/discussions/3796) from the NgRx team some months ago because it reminded me a lot the simplicity and scalability of Pinia. The NgRx team, after some months of development and discussions with the community based on the RFC, released a stable version of the NgRx Signals Store package. The final result made me very enthusiastic. In the next sections I want to give you all the required knowledge you need to have in order to start working with this library.
+When the Angular team introduced the signals API, I started thinking about what a nice solution for the state management of signals would look like. I had the hope that the emerging solution would be a thin layer on top of Angular signals, providing the necessary tools for working with them in a structured and scalable way while minimizing boilerplate. Having worked with [Pinia](https://pinia.vuejs.org/) in the past, the official state management solution for Vue.js, I really liked its simplicity and modularity. Pinia has only a few core concepts and a very compact API which makes it super easy to start working with. 
+
+So, I was positively surprised when I saw the [NgRx SignalStore RFC](https://github.com/ngrx/platform/discussions/3796) from the NgRx team some months ago. It strongly resembled the simplicity, scalability, and structure of a Pinia store. After several months of development and community discussions based on the RFC, the NgRx team released the first version of the NgRx Signals Store package, now in developer preview. The result made me very enthusiastic about it. In the following sections, I aim to provide you with all the necessary knowledge to start working and experimenting with this library.
 
 ## Overview of the NgRx Signals Store
 
-The new NgRx Signals Store is an all-in-one functional state management solution for Angular Signals. As you can see in the following diagram, the API for the Signals Store is quite small. You can create a store using the `signalStore` function. You can handle simple pieces of state using the `signalState`. You can extend the core functionality with custom features. You can integrate RxJS using the `rxMethod` and you can manage entities using the `withEntities` feature. And that's it. If you need extra functionality it's super simple to extend it with custom features (we're going to explore them in one of the next sections).
+The new NgRx Signals Store is an all-in-one functional state management solution for Angular Signals. As you can see in the following diagram, the API for the Signals Store is quite compact. You can create a store using the `signalStore` function. You can handle simple pieces of state using the `signalState`. You can extend the core functionality with custom features. You can integrate RxJS using the `rxMethod` and you can manage entities using the `withEntities` feature. That's it. If you need additional functionality it's super simple to extend it with custom features (which we will explore in one of the next sections).
 
 ![ngrx signals structure](/assets/blog/ngrx-signals-store/ngrx-signals-structure.png)
 
@@ -50,7 +52,7 @@ export default class HelloComponent {
 }
 ```
 
-After this example, you might wonder why the NgRx team decided to follow a more functional approach in comparison to the class-based approach they used for the ComponentStore for example. A few months ago, in the NgRx repo there was an [RFC](https://github.com/ngrx/platform/discussions/3769) about a new way to create custom NgRx ComponentStore without using a "class-based" approach but using a function instead. I believe that this explains also their decision to follow a functional approach for the new NgRx Signals Store. Their arguments in that RFC in favour of the more functional approach were the following:
+After considering this example, you might be wondering why the NgRx team decided to adopt a more functional approach in comparison to the class-based approach used in the ComponentStore, for instance. A few months ago, in the NgRx repository, there was an [RFC](https://github.com/ngrx/platform/discussions/3769) discussing a new method to create custom NgRx ComponentStore without using a "class-based" approach but instead using a function. I believe this also explains their decision to embrace a functional approach for the new NgRx Signals Store. Their arguments in favor of the more functional approach, outlined in that RFC, were as follows:
 
 > There are several community ComponentStore plugins - ImmerComponentStore, EntityComponentStore, etc. However, in JS/TS, a class can only extend one class by default and without additional hacks. What if we want to create a ComponentStore that reuses entity features but also has immer updaters? With the createComponentStore function, I see the possibility of combining reusable features in a more flexible way.
 >
@@ -58,13 +60,13 @@ After this example, you might wonder why the NgRx team decided to follow a more 
 >
 > With the "class-based" approach, ComponentStores that use onStoreInit and/or onStateInit hooks must be provided by using the provideComponentStore function. This won't be necessary with the createComponentStore function.
 
-Indeed, as we will see in the next sections, it's super easy to extend the functionality of the new NgRx Signals Store with custom features, to compose features and to split the code. Also something that is not mentioned in the above RFC is that the code is more tree-shakeable.
+Indeed, as we will see in the next sections, it's super easy to extend the functionality of the new NgRx Signals Store with custom features, to compose features and to split the code. Also, something not mentioned in the above RFC is that the code becomes more tree-shakeable.
 
 ## How the NgRx Signals Store works
 
 ### signalStore
 
-Conceptually the `signalStore` function is similar to the RxJS `pipe` function. The `pipe` function takes pipeable operators as arguments, it will first perform the logic of the first pipeable operator and then use that value to perform the logic of the next pipeable operator, and so on. In this way, we define the behavior of a stream. In the same way, the `signalStore` function takes `store feature functions` (`SignalStoreFeature`) as an argument, it will first perform the logic of the first `store feature function` and then use that value to perform the logic of the next feature function and so on. In this way, we define the intended behavior of our store.
+Conceptually the `signalStore` function is similar to the RxJS `pipe` function. The `pipe` function takes pipeable operators as arguments, it first performs the logic of the first pipeable operator and then uses that value to execute the logic of the next pipeable operator, and so on. In this way, we define the behavior of a stream. Similarly, the `signalStore` function takes `store feature functions` (such as `withState`, `withComputed`, `withHooks`, etc.) as input arguments. It will first perform the logic of the first `store feature function` and then uses that value to execute the logic of the next feature function and so on. In this way, we define the intended behavior of our store.
 
 ```ts
 import { computed } from '@angular/core';
@@ -78,15 +80,15 @@ export const HelloStore = signalStore(
 );
 ```
 
-Let's explore what happens internally when we call the `signalStore` function. The first thing that happens is that an `injectable service` will be created. This service is what the signalStore function returns back. Depending on the configuation we have provided, Angular will provide the service in the root injector making it available throughout the application (global state) or we will have to provide it in a specific component (local state).
+Let's explore what happens internally when we call the `signalStore` function. The first thing that happens is that an `injectable service` will be created. This service is what the `signalStore` function returns. Depending on the configuration we have provided, Angular will provide the service in the root injector making it available throughout the application (global state) or we will need to provide it in a specific component (local state).
 
 ![ngrx signals store injectable](/assets/blog/ngrx-signals-store/signal-store-injectable.png)
 
-In the constructor of the created class, the store features we have provided will be start executed one by one in the order we have provided them. The order of the features depends on the functionality you want to be provided from the previous feature to the next one. For example, if you want to use a method you have declared in the `withMethods` feature in the `withHooks` method, you need to add `withMethods` first in the order. 
+In the constructor of the created class, the `store features` we have provided will start executing one by one in the specified order. The sequence of features depends on the functionality you desire, progressing from the previous feature to the next. For instance, if you wish to utilize a method declared in the `withMethods` feature within the `withHooks` method, you must include `withMethods` first in the order.
 
 ![ngrx signals store features execution](/assets/blog/ngrx-signals-store/features-execution-2.png)
 
-There are 4 core features provided to us from NgRx. Let's explore what each one of them does: 
+There are 5 core features provided to us from NgRx. Let's explore what each one of them does: 
 
 ### withState
 
@@ -112,7 +114,7 @@ export const UserStore = signalStore(
 );
 ```
 
-The `withState` function will create a deep signal for us. That means that we can access in our components and we can use generally in our code any property of the state as we would do for any other signal. For example for the above store, we can display the country of the user like this:
+The `withState` function will create a nested signal for us. This means that we can access any property of the state, regardless of its depth, in our components or in our code, just as we would for any other signal. For example, with the above store, we can display the user's country like this:
 
 ```ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
@@ -131,15 +133,15 @@ export default class UserComponent {
 }
 ```
 
-Because internally the `withState` feature function uses a `Proxy` to create the deep signal, the signal for every property (which in reality is a `computed`) will be created lazily, only when we try to access the propery. This improves the overall performance in cases where we only need to observe a small subset of the object's(state) properties. Also if the nested signal has already been accessed(created), it won't be created again.
+Because internally the `withState` feature function uses a `Proxy` to create the nested signal, the signal for every property (which, in reality, is a `computed`) will be created lazily, only when we try to access the propery. This improves the overall performance in cases where we only need to observe a small subset of the state properties (for instance, if we have stored the result of an HTTP call in the store, and we only need to read specific properties). Additionally, if the nested signal has already been accessed(created), it won't be created again when we try to access it for a second time.
 
-As we saw earlier the features are called based on the order we have placed them when we call the `signalStore` function. Each one of them is a factory function which returns a function which internally will be called with the store as an argument as it is defined until the point of its execution. That mean that if the store contains already a method or a state slice or a computed entry with the same key as the keys of the state we define with the `withState` feature, the latter will override previously defined state slices, computed, and methods with the same name as you can see in the following diagram. Because unintentional overriding might lead to issues which are difficult to be detected, the NgRx team might improve soon the DX by showing a warning or an error when this happens (follow up on this open [issue](https://github.com/ngrx/platform/issues/4144)).
+As we saw earlier, the features are called based on the order in which we have placed them when we call the `signalStore` function. Each of them is a factory function which returns a function which internally will be called with the store as an argument,  as it is defined up to the point of its execution. This means that if the store already contains a method or a state slice or a computed entry with the same key as the keys of the state we define with the `withState` feature, the latter will override previously defined state slices, computed, and methods with the same name as illustrated in the following diagram.  Because unintentional overriding might lead to issues that are difficult to detect, the NgRx team might soon improve the developer experience by showing a warning or an error when this happens  (open [issue](https://github.com/ngrx/platform/issues/4144)).
 
 ![ngrx signals store features execution](/assets/blog/ngrx-signals-store/with-state-remove-same-keys-3.png)
 
 ### withMethods
 
-The withMethods feature enable us to add methods in our store. This can be the public API of our store. Inside these methods, we can update our state using the `patchState` utility function or we can integrate RxJS using the `rxMethod`, or you can add any other logic you want to perform in this method. In the same manner as with the `withState`, it will override previously defined state slices and computed properties with the same name. 
+The withMethods feature enable us to add methods in our store. This can be the public API of our store. Inside these methods, we can update our state using the `patchState` utility function or we can integrate RxJS using the `rxMethod`, or you can add any other logic you want to perform in this method. Similarly to the `withState`, it will override previously defined state slices and computed properties with the same name. 
 
 Examples of `withMethods` usage:
 
@@ -189,11 +191,11 @@ export const ArticleStore = signalStore(
 
 ### patchState
 
-The patchState utility function provides a type-safe way to perform immutable updates on pieces of state. Due to a recent change to the default equality check function in signals in Angular 17.0.0-next.8 release, it is important to make sure that we update the values of the nested signals of our state in an immutable way. That's because in the new default equality check of the Angular signals, objects are checked by reference. So if you return the same object, just mutated, your signal will not send a notification that is updated. The `patchState` function helps us with this.
+The patchState utility function provides a type-safe way to perform immutable updates on pieces of state. Due to a recent change to the default equality check function in signals in Angular 17.0.0-next.8 release, it is important to make sure that we update the values of the nested signals of our state in an immutable way. That's because in the new default equality check of the Angular signals, objects are checked by reference. Therefore, if you return the same object, just mutated, your signal will not send a notification indicating that it has been updated. The `patchState` function helps us with this.
 
 #### withComputed
 
-Using the `withComputed` feature we can specify in our store derived state, thus state which is calculated based on one or more slices of our state. In the same manner as with the `withState` and the `withMethods` features, it will override previously defined state slices and methods with the same name.
+Using the `withComputed` feature we can specify in derived state from our store (state which is calculated based on one or more slices of our state). Similarly to the `withState` and the `withMethods` features, it will override previously defined state slices and methods with the same name.
 
 Examples of `withComputed` usage:
 
@@ -213,7 +215,7 @@ export const HelloStore = signalStore(
 
 ### withHooks
 
-In case we want to perform specific actions when the store is created or destroyed like calling one of the methods we have defined previously in the `withMethods` feature or performing some clean-up logic, we can use the `withHooks` feature. The lifecycle methods also have access to the injection context for automatic cleanup using the takeUntilDestroyed() function from Angular.
+In case we want to perform specific actions when the store is created or destroyed like calling one of the methods we have defined previously in the `withMethods` feature or performing some clean-up logic, we can use the `withHooks` feature.
 
 Example of `withHooks` usage:
 
@@ -244,7 +246,7 @@ export const HelloStore = signalStore(
 
 ## Customs features
 
-One of the biggest strengths of the new NgRx Signals Store is its extensibility. Apart from using the core features provided from the library (withEntities, withState, withMethods, withHooks, withComputed), you can create in a super easy way your own custom features and extend the library's capabilities and functionality based on your own needs. Of course, this gives also the chance to the community to start creating custom features which can be used in the same way as the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) library which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc.
+One of the biggest strengths of the new NgRx Signals Store is its extensibility. In addition to utilizing the core features provided by the library (withEntities, withState, withMethods, withHooks, withComputed), you can easily create your own custom features to enhance the library's capabilities and functionality based on your specific needs. Of course, this gives also the chance to the community to start creating custom features that can be seamlessly integrated alongside the core features. One of the best examples so far is the [ngrx-toolkit](https://github.com/angular-architects/ngrx-toolkit) library which provides already a lot of useful custom features like `withDevtools`, `withRedux`, `withDataService`, `withCallState`, `withUndoRedo`, etc. In the next sections we're going to create our own custom feature (withClipboard).
 
 The NgRx Signals Store can be fully extended. Here is a list of things you can do with a custom feature:
 
@@ -254,7 +256,7 @@ The NgRx Signals Store can be fully extended. Here is a list of things you can d
 - Specify which properties a store should contain in order to be possible to use them in a store.
 - Re-use the same functionality accross different stores
 
-You can create a custom feature using the `signalStoreFeature` function. In the same way with the `signalStore` function, it receives one or more core or custom features as input argument(s). In the same way with the signal store function, it will first perform the logic of the first provided feature and then use that value to perform the logic of the next feature function and so on. One of the simplest examples of a custom feature is the following `withClipboard` feature. It enables us to copy text to clipboard and saves the copied text to the store.
+You can create a custom feature using the `signalStoreFeature` function. Similarly to the `signalStore` function, it takes one or more core or custom features as input argument(s). It will first execute the logic of the first provided feature and then use that value to execute the logic of the next feature function and so on. One of the simplest examples of a custom feature is the following `withClipboard` feature. It enables you to copy text to the clipboard and saves the copied text in the store.
 
 ```ts
 ...
@@ -308,10 +310,9 @@ You can find the example here: [Stackblitz](https://stackblitz-starters-s3qcsd.s
 
 Most likely you have already understood the problem with the above custom feature. If I want to save the ***copied*** status for more than one elements in the page in the same store, it's not possible with the current implementation of the feature. When you start working with the NgRx Signals Store and with the custom features, one of the first problems you will encounter is how you can use the same custom feature multiple times in the same store. The solution for this is very nicely explained in an [article from Manfred Steyer](https://www.angulararchitects.io/en/blog/ngrx-signal-store-deep-dive-flexible-and-type-safe-custom-extensions/). In the next paragraph I will show how we can re-implement the above custom feature so it can be used many times in the same store so we can save the status of different elements in the page. What we need to implement is  a custom feature with dynamic properties.
 
-What we should be able to do at the end is to prefix the slices of the custom feature's state with a dynamic property. In this way we avoid having naming collisions in the state slices. 
+In the end, we should be able to prefix the slices of the custom feature's state with a dynamic property. This way, we can avoid naming collisions in the state slices. For the same reason, we also want to prefix the methods.
 
 ![custom-feature-dynamic-properties](/assets/blog/ngrx-signals-store/custom-feature-dynamic-properties.png)
-
 
 To do this, we need to inform the type system about our intention to return prefixed slices and methods in the custom `SignalStoreFeature`. We do this by providing the following types:
 
@@ -397,7 +398,7 @@ will throw an error when used out of the injection context.
 
 ## Conclusion
 
-If you already use NgRx in a project, I would suggest to start working with the NgRx Signals Store for new state. You can easily combine the NgRx Store and the NgRx Signals Store ([example](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts#L121)). For a new project I would strongly suggest to start working directly with the NgRx Signals Store for the state management, since it can reduce dramatically the boilerplate and of course it has full support for working with Angular Signals in a structured way.
+If you already use NgRx in a project, I would suggest starting to work with the NgRx Signals Store for introducing new stores. You can easily combine the NgRx Store and the NgRx Signals Store ([example](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts#L121)). For a new project, I would strongly suggest starting to work directly with the NgRx Signals Store for state management. This is because it can dramatically reduce boilerplate and, of course, has full support for working with Angular Signals in a structured way.
 
 ## Useful links - examples:
 - [Example app using NgRx Signal Store - currently migrating from NgRx Store to NgRx Signal Store](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts)
