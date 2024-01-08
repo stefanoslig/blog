@@ -1,6 +1,6 @@
 ---
-title: 'All you need to know to start working with the NgRx Signals Store'
-excerpt: 'In this article we explore how we can migrate a codebase using NgRx Store to the NgRx SignalStore'
+title: 'All you need to know to get started with the NgRx Signals Store'
+excerpt: 'In this article, we explore the NgRx Signals Store, a new state management solution for Angular Signals, offering simplicity, scalability, and minimal boilerplate.'
 coverImage: '/assets/blog/ngrx-signals-store/ngrx-signals-store.png'
 date: '2024-01-08T05:35:07.322Z'
 author:
@@ -193,7 +193,7 @@ export const ArticleStore = signalStore(
 
 The patchState utility function provides a type-safe way to perform immutable updates on pieces of state. Due to a recent change to the default equality check function in signals in Angular 17.0.0-next.8 release, it is important to make sure that we update the values of the nested signals of our state in an immutable way. That's because in the new default equality check of the Angular signals, objects are checked by reference. Therefore, if you return the same object, just mutated, your signal will not send a notification indicating that it has been updated. The `patchState` function helps us with this.
 
-#### withComputed
+### withComputed
 
 Using the `withComputed` feature we can specify in derived state from our store (state which is calculated based on one or more slices of our state). Similarly to the `withState` and the `withMethods` features, it will override previously defined state slices and methods with the same name.
 
@@ -394,7 +394,35 @@ Now we can see that each element in the page has its own slice in the store.
 You can find the full implementation here: [Stackblitz](https://stackblitz-starters-2ea27n.stackblitz.io)
 
 ## RxMethod
-will throw an error when used out of the injection context.
+Even when working with signals, integrating RxJS in our code can give us extra powers. The `rxMethod` is a standalone factory function which helps us to create reactive methods. It returns a function that accepts a static value, signal, or observable as an input argument. If a static value is provided as input, the returned method will be executed only once. If a signal is provided, then it will be re-exexuted every time the signal notifies that it changed and when an observable is provided, it will be re-executed avery time the observable emits a value.
+
+Example:
+
+```ts
+withMethods((store) => ({
+  logIntervals: rxMethod(
+    pipe(
+      filter((num) => num % 2 === 0),
+      tap((val) => console.log(`Even number: ${val}`))
+    )
+  ),
+})),
+```
+
+In the following component, a new message will be logged every time the `myNumberSignal` signal changes.
+
+```ts
+export class ExampleComponent {
+  readonly helloStore = inject(HelloStore);
+  readonly myNumberSignal = signal(0);
+
+  constructor() {
+    interval(1000).subscribe((value) => this.number.set(value));
+
+    this.helloStore.logIntervals(this.number);  
+  }
+}
+```
 
 ## Conclusion
 
