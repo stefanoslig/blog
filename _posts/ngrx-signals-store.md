@@ -18,9 +18,9 @@ So, I was positively surprised when I saw the [NgRx SignalStore RFC](https://git
 
 ## Overview of the NgRx Signal Store
 
-The new NgRx Signal Store is an all-in-one functional state management solution for Angular Signals. As you can see in the following diagram, the API for the Signals Store is quite compact. You can create a store using the `signalStore` function. You can handle simple pieces of state using the `signalState`. You can extend the core functionality with custom features. You can integrate RxJS using the `rxMethod` and you can manage entities using the `withEntities` feature. That's it. If you need additional functionality it's super simple to extend it with custom features (which we will explore in one of the next sections).
+The new NgRx Signal Store is an all-in-one functional state management solution for Angular Signals. As you can see in the following diagram, the API for the Signals Store is quite compact. You can create a store using the `signalStore` function. You can handle simple pieces of state using the `signalState`. You can extend the core functionality with custom features using the `signalStoreFeature`. You can integrate RxJS using the `rxMethod` and you can manage entities using the `withEntities` feature. That's it. If you need additional functionality it's super simple to extend it with custom features (which we will explore in one of the next sections).
 
-![ngrx signals structure](/assets/blog/ngrx-signals-store/ngrx-signals-structure.png)
+![ngrx signals structure](/assets/blog/ngrx-signals-store/ngrx-signal-store-structure.png)
 
 The simplest example of creating a store is:
 
