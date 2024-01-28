@@ -235,13 +235,15 @@ export const HelloStore = signalStore(
       patchState(store, { firstName });
     },
   })),
-  withHooks({
-    onInit({ changeFirstName }) {
-      changeFirstName('Nick');
-    },
-    onDestroy({ firstName }) {
-      console.log('firstName on destroy', firstName());
-    },
+  withHooks(({ firstName, changeFirstName }) => {
+    return {
+      onInit() {
+        changeFirstName('Nick');
+      },
+      onDestroy() {
+        console.log('firstName on destroy', firstName());
+      },
+    };
   })
 );
 ```
@@ -308,7 +310,7 @@ export const HelloStore = signalStore(
 
 ![gif example](/assets/blog/ngrx-signals-store/ezgif.com-video-to-gif-converter.gif)
 
-You can find the example here: [Stackblitz](https://stackblitz-starters-s3qcsd.stackblitz.io)
+You can find the example here: [Stackblitz](https://stackblitz.com/edit/stackblitz-starters-s3qcsd?file=src%2Fmain.store.ts)
 
 Most likely you have already understood the problem with the above custom feature. If I want to save the ***copied*** status for more than one elements in the page in the same store, it's not possible with the current implementation of the feature. When you start working with the NgRx Signal Store and with the custom features, one of the first problems you will encounter is how you can use the same custom feature multiple times in the same store. The solution for this is very nicely explained in an [article from Manfred Steyer](https://www.angulararchitects.io/en/blog/ngrx-signal-store-deep-dive-flexible-and-type-safe-custom-extensions/). In the next paragraph I will show how we can re-implement the above custom feature so it can be used many times in the same store so we can save the status of different elements in the page. What we need to implement is  a custom feature with dynamic properties.
 
@@ -393,7 +395,7 @@ Now we can see that each element in the page has its own slice in the store.
 
 ![gif example](/assets/blog/ngrx-signals-store/ezgif.com-video-to-gif-converter-2.gif)
 
-You can find the full implementation here: [Stackblitz](https://stackblitz-starters-2ea27n.stackblitz.io)
+You can find the full implementation here: [Stackblitz](https://stackblitz.com/edit/stackblitz-starters-2ea27n?file=src%2Fmain.store.ts)
 
 ## RxMethod
 
@@ -433,8 +435,8 @@ If you already use NgRx in a project, I would suggest starting to work with the 
 
 ## Useful links - examples:
 - [Example app using NgRx Signal Store - currently migrating from NgRx Store to NgRx Signal Store](https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app/blob/main/libs/articles/data-access/src/lib/article.store.ts)
-- [Stackblitz custom feature - withClipboard](https://stackblitz-starters-s3qcsd.stackblitz.io)
-- [Stackblitz custom feature dynamic properties - withClipboard](https://stackblitz-starters-2ea27n.stackblitz.io)
+- [Stackblitz custom feature - withClipboard](https://stackblitz.com/edit/stackblitz-starters-s3qcsd?file=src%2Fmain.store.ts)
+- [Stackblitz custom feature dynamic properties - withClipboard](https://stackblitz.com/edit/stackblitz-starters-2ea27n?file=src%2Fmain.store.ts)
 - [Other custom features - NgRx toolkit library](https://github.com/angular-architects/ngrx-toolkit)
 
 
